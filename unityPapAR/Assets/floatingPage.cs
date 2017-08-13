@@ -8,6 +8,8 @@ public class floatingPage : MonoBehaviour {
 	public UnityEngine.UI.Text dispText2;
 	public string currentTextureName = "DemoDocTexture";
 	//public Texture demotex = Resources.Load ("DemoDocTexture") as Texture;
+	public float pageWidth = 1f;
+	public float pageHight = 1f;
 
 	// Use this for initialization
 	void Start () {
@@ -36,13 +38,20 @@ public class floatingPage : MonoBehaviour {
 		Texture demotex = Resources.Load (currentTextureName) as Texture;
 
 
+		//var height = 2.0f * Mathf.Tan(0.5f * Camera.allCameras[0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
+		//var width = height * Screen.width / Screen.height;
+
 		var height = 2.0f * Mathf.Tan(0.5f * Camera.allCameras[0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
 		var width = height * Screen.width / Screen.height;
+
+		var sizeDiff = width / demotex.width;
+		pageWidth = width;
+		pageHight = demotex.height*sizeDiff;
 
 		floatingImagePlane.GetComponent<Renderer> ().material.mainTexture = demotex;
 		floatingImagePlane.name = texName;
 		//floatingImagePlane.transform.localScale = new Vector3(demotex.width/100000f, 0.005f, demotex.height/100000f);
-		floatingImagePlane.transform.localScale = new Vector3(width/100f, 0.005f, height/100f);
+		floatingImagePlane.transform.localScale = new Vector3(pageWidth/100f, 0.005f, pageHight/100f);
 		floatingImagePlane.transform.localPosition = new Vector3(Camera.allCameras[0].transform.position.x, Camera.allCameras[0].transform.position.y, Camera.allCameras[0].transform.position.z);
 		floatingImagePlane.transform.parent = Camera.allCameras[0].transform;
 
@@ -72,9 +81,15 @@ public class floatingPage : MonoBehaviour {
 		GameObject imagePlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
 		Texture demotex = Resources.Load (currentTextureName) as Texture;
 
+		var height = 2.0f * Mathf.Tan(0.5f * Camera.allCameras[0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
+		var width = height * Screen.width / Screen.height;
+
+
 		// Adjust scale and position 
 		// (use localScale and localPosition to make it relative to the parent)
-		cube.transform.localScale = new Vector3(demotex.height/10000f, demotex.height/10000f, 0.008f);
+		//cube.transform.localScale = new Vector3(demotex.height/10000f, demotex.height/10000f, 0.008f);
+		//cube.transform.localScale = new Vector3(width/10f, height/10f, 0.008f);
+		cube.transform.localScale = new Vector3(pageWidth/10f, pageHight/10f, 0.008f);
 		cube.transform.localPosition = new Vector3(Camera.allCameras[0].transform.position.x, Camera.allCameras[0].transform.position.y, Camera.allCameras[0].transform.position.z);
 		cube.transform.localEulerAngles = Camera.allCameras[0].transform.eulerAngles;
 		//cube.transform.localEulerAngles = new Vector3 (-90f, 0f, 180f);
