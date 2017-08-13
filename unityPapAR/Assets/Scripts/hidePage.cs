@@ -19,10 +19,16 @@ public class hidePage : MonoBehaviour {
 		// Destroy (this.gameObject);
 		gameObject.GetComponent<Renderer>().enabled = !gameObject.GetComponent<Renderer>().enabled;
 		//gameObject.transform.Translate (1, 1, 1);
-		gameObject.transform.SetPositionAndRotation (new Vector3(0, 0, 20), gameObject.transform.localRotation);
+		gameObject.transform.localPosition = new Vector3(Camera.allCameras[0].transform.position.x, Camera.allCameras[0].transform.position.y, Camera.allCameras[0].transform.position.z);
+
+		//gameObject.transform.SetPositionAndRotation (gameObject.transform.parent.position, gameObject.transform.localRotation);
 
 		if (gameObject.GetComponent<Renderer> ().enabled == false) {
 			gameObject.transform.parent = null;
+			//Transform imgTarget = GameObject.Find("ImageTarget").transform; 
+			//gameObject.transform.SetParent (imgTarget);
+
 		}
 	}
+		
 }

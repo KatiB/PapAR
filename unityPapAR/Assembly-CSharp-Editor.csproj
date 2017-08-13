@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{B07C988E-C505-5817-91B9-91A55D4295DA}</ProjectGuid>
+    <ProjectGuid>{987ED8F2-4503-6CBD-4B96-28415DB453C1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
@@ -66,7 +66,7 @@
      <None Include="Assets\Vuforia\Shaders\BrightTexture.shader" />
      <None Include="Assets\Vuforia\Shaders\Text3D.shader" />
  <Reference Include="Assembly-UnityScript-Editor-firstpass">
- <HintPath>C:/Users/Public/Documents/Studium/Master/implementierung/GitRepo/PapAR/5minDemo/Library/ScriptAssemblies/Assembly-UnityScript-Editor-firstpass.dll</HintPath>
+ <HintPath>C:/Users/Public/Documents/Studium/Master/implementierung/GitRepo/PapAR/unityPapAR/Library/ScriptAssemblies/Assembly-UnityScript-Editor-firstpass.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Advertisements/Editor/UnityEditor.Advertisements.dll</HintPath>
@@ -126,15 +126,15 @@
  <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
  </Reference>
  <Reference Include="Vuforia.UnityExtensions.Editor">
- <HintPath>C:/Users/Public/Documents/Studium/Master/implementierung/GitRepo/PapAR/5minDemo/Assets/Vuforia/Editor/Scripts/Vuforia.UnityExtensions.Editor.dll</HintPath>
+ <HintPath>C:/Users/Public/Documents/Studium/Master/implementierung/GitRepo/PapAR/unityPapAR/Assets/Vuforia/Editor/Scripts/Vuforia.UnityExtensions.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Vuforia.UnityExtensions">
- <HintPath>C:/Users/Public/Documents/Studium/Master/implementierung/GitRepo/PapAR/5minDemo/Assets/Vuforia/Scripts/Internal/Vuforia.UnityExtensions.dll</HintPath>
+ <HintPath>C:/Users/Public/Documents/Studium/Master/implementierung/GitRepo/PapAR/unityPapAR/Assets/Vuforia/Scripts/Internal/Vuforia.UnityExtensions.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp.csproj">
-      <Project>{822C008D-F463-3BB0-477F-948857242320}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
+      <Project>{EFB94FC6-8EA2-CAB7-A3BE-4884160F2188}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

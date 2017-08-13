@@ -1,0 +1,16 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\floatingPage.cs">
+    <Files>
+      <File FileName="Assets\Scripts\ModelPopsup.cs" Line="104" Column="70" />
+      <File FileName="Assets\Scripts\hidePage.cs" Line="33" Column="3" />
+      <File FileName="Assets\Vuforia\Scripts\Internal\clickbehaviour.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\dispCamPos.cs" Line="1" Column="1" />
+      <File FileName="Assets\floatingPage.cs" Line="48" Column="39" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

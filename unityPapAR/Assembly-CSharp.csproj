@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{822C008D-F463-3BB0-477F-948857242320}</ProjectGuid>
+    <ProjectGuid>{EFB94FC6-8EA2-CAB7-A3BE-4884160F2188}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\ModelPopsup.cs" />
+     <Compile Include="Assets\Scripts\dispCamPos.cs" />
      <Compile Include="Assets\Scripts\exitPlay.cs" />
      <Compile Include="Assets\Scripts\hidePage.cs" />
      <Compile Include="Assets\Vuforia\Scripts\BackgroundPlaneBehaviour.cs" />
@@ -86,7 +87,7 @@
      <Compile Include="Assets\Vuforia\Scripts\WireframeBehaviour.cs" />
      <Compile Include="Assets\Vuforia\Scripts\WireframeTrackableEventHandler.cs" />
      <Compile Include="Assets\Vuforia\Scripts\WordBehaviour.cs" />
-     <Compile Include="Assets\dispCamPos.cs" />
+     <Compile Include="Assets\floatingPage.cs" />
      <None Include="Assets\Plugins\Android\AndroidManifest.xml" />
      <None Include="Assets\Vuforia\Shaders\ColoredLines.shader" />
      <None Include="Assets\link.xml" />
@@ -123,7 +124,7 @@
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>
  </Reference>
  <Reference Include="Vuforia.UnityExtensions">
- <HintPath>C:/Users/Public/Documents/Studium/Master/implementierung/GitRepo/PapAR/5minDemo/Assets/Vuforia/Scripts/Internal/Vuforia.UnityExtensions.dll</HintPath>
+ <HintPath>C:/Users/Public/Documents/Studium/Master/implementierung/GitRepo/PapAR/unityPapAR/Assets/Vuforia/Scripts/Internal/Vuforia.UnityExtensions.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
