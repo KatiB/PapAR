@@ -34,6 +34,7 @@ public class floatingPage : MonoBehaviour {
 		//gameObject.GetComponent<Renderer> ().material.mainTexture = demotex;
 		//floatingImg.gameObject.SetActive(true);
 		GameObject floatingImagePlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+		GameObject floatingImagePlaneBackground = GameObject.CreatePrimitive(PrimitiveType.Plane);
 
 		Texture demotex = Resources.Load (currentTextureName) as Texture;
 
@@ -41,29 +42,69 @@ public class floatingPage : MonoBehaviour {
 		//var height = 2.0f * Mathf.Tan(0.5f * Camera.allCameras[0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
 		//var width = height * Screen.width / Screen.height;
 
-		var height = 2.0f * Mathf.Tan(0.5f * Camera.allCameras[0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
+		var height = 2.0f * Mathf.Tan (0.5f * Camera.allCameras [0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
 		var width = height * Screen.width / Screen.height;
 
-		var sizeDiff = width / demotex.width;
-		pageWidth = width;
-		pageHight = demotex.height*sizeDiff;
-
+		if (Screen.width < Screen.height) {
+			var sizeDiff = width / demotex.width;
+			pageWidth = width;
+			pageHight = demotex.height * sizeDiff;
+		} else {
+			var sizeDiff = height / demotex.height;
+			pageHight = height;
+			pageWidth = demotex.width * sizeDiff;
+		}
+			
+			
 		floatingImagePlane.GetComponent<Renderer> ().material.mainTexture = demotex;
 		floatingImagePlane.name = texName;
 		//floatingImagePlane.transform.localScale = new Vector3(demotex.width/100000f, 0.005f, demotex.height/100000f);
 		floatingImagePlane.transform.localScale = new Vector3(pageWidth/100f, 0.005f, pageHight/100f);
-		floatingImagePlane.transform.localPosition = new Vector3(Camera.allCameras[0].transform.position.x, Camera.allCameras[0].transform.position.y, Camera.allCameras[0].transform.position.z);
+		//floatingImagePlane.transform.localPosition = new Vector3(Camera.allCameras[0].transform.position.x, Camera.allCameras[0].transform.position.y, Camera.allCameras[0].transform.position.z);
+
 		floatingImagePlane.transform.parent = Camera.allCameras[0].transform;
+		//floatingImagePlane.transform.parent = GameObject.Find("floatingBackgroundPanel").transform;
 
 		floatingImagePlane.transform.localEulerAngles = Camera.allCameras[0].transform.eulerAngles;
 		floatingImagePlane.transform.localEulerAngles = new Vector3 (90f, 0f, 180f);
+		//floatingImagePlane.transform.Translate (0.0f, -0.2f, 0.0f);
+		floatingImagePlane.transform.localPosition = new Vector3 (0, 0, 0.2f);
 		//floatingImagePlane.transform.SetPositionAndRotation (floatingImagePlane.transform.parent.position, floatingImagePlane.transform.parent.localRotation);
-		floatingImagePlane.transform.Translate (0.0f, -0.2f, 0.0f);
 		//floatingImagePlane.transform.localScale = new Vector3(demotex.width, 0.008f, demotex.height);
 		//floatingImagePlane.transform.localScale = new Vector3(0.008f, 0.008f, 0.005f);
 
+		//floatingImagePlane.transform.localScale = new Vector3(pageWidth/0.1f, 0.05f, pageHight/0.1f);
+		//floatingImagePlane.transform.localScale = new Vector3(pageWidth, 0.05f, pageHight);
+
+		//floatingImagePlane.transform.localEulerAngles = Camera.allCameras[0].transform.eulerAngles;
+		//floatingImagePlane.transform.localEulerAngles = new Vector3 (90f, 0f, 0f);
+		//floatingImagePlane.transform.Translate (0.0f, 0.0001f, 0.0f);
+
+
 		//floatingImagePlane.transform.localScale = new Vector3 (Screen.width, 0.01f, Screen.height);
 
+		//Color backGr = new Color (0.28f, 0.44f, 0.48f, 0.05f);
+		//Color backGr = new Color32 (72, 112, 123, 128);
+		//floatingImagePlaneBackground.GetComponent<Renderer> ().material.SetColor ("_Color", backGr);
+
+		Material newMat = Resources.Load("backgroundMaterial", typeof(Material)) as Material;
+		floatingImagePlaneBackground.GetComponent<Renderer> ().material = newMat;
+
+
+		floatingImagePlaneBackground.name = "floatingImgBackground";
+		floatingImagePlaneBackground.transform.parent = floatingImagePlane.transform;
+		//floatingImagePlaneBackground.transform.parent = Camera.allCameras[0].transform;
+		floatingImagePlaneBackground.transform.localEulerAngles = new Vector3 (0f, 0f, 0f);
+		floatingImagePlaneBackground.transform.localPosition = new Vector3 (0.0f, -0.20001f, 0.0f);
+
+		//floatingImagePlaneBackground.transform.localEulerAngles = Camera.allCameras[0].transform.eulerAngles;
+		//floatingImagePlaneBackground.transform.localEulerAngles = new Vector3 (90f, 0f, 180f);
+		//floatingImagePlaneBackground.transform.Translate (0.0f, -0.2f, 0.0f);
+
+
+		floatingImagePlaneBackground.GetComponent<Renderer> ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+		floatingImagePlaneBackground.GetComponent<Renderer> ().receiveShadows = false;
+		//floatingImagePlaneBackground.GetComponent<Renderer> (). = false;
 		//
 
 		dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
@@ -124,6 +165,7 @@ public class floatingPage : MonoBehaviour {
 		imagePlane.gameObject.SetActive(true);
 		cube.gameObject.SetActive(true);
 		DestroyObject (GameObject.Find(currentTextureName));
+		DestroyObject (GameObject.Find("backgroundPlane"));
 
 	}
 }
