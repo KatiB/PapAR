@@ -17,7 +17,8 @@ namespace Vuforia
         #region PRIVATE_MEMBER_VARIABLES
  
         private TrackableBehaviour mTrackableBehaviour;
-    
+		public GameObject trackingLostIndicator;
+		public UnityEngine.UI.Text dispText2;
         #endregion // PRIVATE_MEMBER_VARIABLES
 
 
@@ -84,6 +85,7 @@ namespace Vuforia
             }
 
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
+			toggleTrackingWarning (false);
         }
 
 
@@ -105,7 +107,26 @@ namespace Vuforia
             }
 
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
+			toggleTrackingWarning (true);
+
         }
+
+		private void toggleTrackingWarning (bool visibilityState){
+			if (dispText2 == null) {
+				dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
+			}
+			if (visibilityState) {
+				dispText2.text = "Tracking is lost!";
+			} else {
+				dispText2.text = "There is the Tracking!";
+			}
+
+			if (trackingLostIndicator == null) {
+				trackingLostIndicator = GameObject.Find ("WarningPanel");
+			}
+			trackingLostIndicator.gameObject.SetActive (visibilityState);
+			
+		}
 
         #endregion // PRIVATE_METHODS
     }
