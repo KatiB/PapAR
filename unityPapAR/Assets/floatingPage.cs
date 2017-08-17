@@ -10,6 +10,8 @@ public class floatingPage : MonoBehaviour {
 	//public Texture demotex = Resources.Load ("DemoDocTexture") as Texture;
 	public float pageWidth = 1f;
 	public float pageHight = 1f;
+	public float pageVol = 0.008f;
+	public bool threeD = true;
 
 	// Use this for initialization
 	void Start () {
@@ -19,6 +21,10 @@ public class floatingPage : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	public void setPalcementMode (bool threed){
+		threeD = threed;
 	}
 
 	public void takePage (string texName) {
@@ -116,46 +122,46 @@ public class floatingPage : MonoBehaviour {
 	}
 
 	public void createSelectedPage () {
-		Debug.Log ("Adding model...");
-
-		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+		Debug.Log ("Placeing a Page...");
+		GameObject ImgTarget = GameObject.Find ("ImageTarget");
+		Plane targetPlane = new Plane (ImgTarget.transform.up, ImgTarget.transform.position);
+		GameObject docVolume = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		GameObject imagePlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
 		Texture demotex = Resources.Load (currentTextureName) as Texture;
-
 		var height = 2.0f * Mathf.Tan(0.5f * Camera.allCameras[0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
 		var width = height * Screen.width / Screen.height;
+		Vector3 pagePos = new Vector3 (Camera.allCameras [0].transform.position.x, Camera.allCameras [0].transform.position.y, Camera.allCameras [0].transform.position.z);
+		Vector3 pageAngle = Camera.allCameras [0].transform.eulerAngles;
+		Vector3 coverAngle = new Vector3 (90.0f, 0.0f, 180.0f);
+		Vector3 pageDist = new Vector3 (0.0f, 0.0f, 0.21f);
+		float camRotY = Camera.allCameras [0].transform.eulerAngles.y;
+
+		if (!threeD) {
+			foreach (Touch touch in Input.touches) {
+				Ray ray = Camera.allCameras [0].ScreenPointToRay (touch.position);
+				float dist = 0.0f;
+				targetPlane.Raycast (ray, out dist);
+				pagePos = ray.GetPoint (dist);
+			}
+			pageAngle = new Vector3 (90.0f, camRotY, 0.0f);
+			pageDist = new Vector3 (0.0f, 0.0f, 0.0f);
+		}
+
+		docVolume.transform.localScale = new Vector3(pageWidth/10f, pageHight/10f, pageVol);
+		docVolume.transform.localPosition = pagePos;
+		docVolume.transform.localEulerAngles = pageAngle;
+		docVolume.transform.Translate (pageDist);
 
 
-		// Adjust scale and position 
-		// (use localScale and localPosition to make it relative to the parent)
-		//cube.transform.localScale = new Vector3(demotex.height/10000f, demotex.height/10000f, 0.008f);
-		//cube.transform.localScale = new Vector3(width/10f, height/10f, 0.008f);
-		cube.transform.localScale = new Vector3(pageWidth/10f, pageHight/10f, 0.008f);
-		cube.transform.localPosition = new Vector3(Camera.allCameras[0].transform.position.x, Camera.allCameras[0].transform.position.y, Camera.allCameras[0].transform.position.z);
-		cube.transform.localEulerAngles = Camera.allCameras[0].transform.eulerAngles;
-		//cube.transform.localEulerAngles = new Vector3 (-90f, 0f, 180f);
-		cube.transform.Translate (0.0f, 0.0f, 0.21f);
-		//cube.GetComponent<Renderer> ().material.mainTexture = demotex;
+		imagePlane.transform.parent = docVolume.transform;
+		imagePlane.transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
+		imagePlane.transform.localScale = new Vector3 (0.1f, 0.1f, 0.1f);
+		imagePlane.transform.localEulerAngles = coverAngle;
+		float coverDist = pageVol / 2 + 0.0001f;
+		imagePlane.transform.Translate (0.0f, coverDist, 0.0f);
 
-
-
-
-		//imagePlane.transform.localScale = new Vector3(demotex.height/100000f, 0.008f, demotex.height/100000f);
-		imagePlane.transform.localPosition = new Vector3(Camera.allCameras[0].transform.position.x, Camera.allCameras[0].transform.position.y, Camera.allCameras[0].transform.position.z);
-		imagePlane.transform.parent = cube.transform;
-		imagePlane.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-		//imagePlane.transform.SetPositionAndRotation (imagePlane.transform.parent.position, imagePlane.transform.parent.localRotation);
-		imagePlane.transform.localEulerAngles = Camera.allCameras[0].transform.eulerAngles;
-		imagePlane.transform.localEulerAngles = new Vector3 (90f, 0f, 180f);
-		imagePlane.transform.Translate (0.0f, -0.2f, 0.0f);
-
-		//imagePlane.GetComponent<Renderer> ().material.mainTexture = demotex;
-		//Texture demotex = gameObject.GetComponent<Texture>();
-		//Texture demotex = gameObject.GetComponentInChildren<Renderer>().material.GetTexture("_MainTex") as Texture;
-		//cube.GetComponent<Renderer> ().material.mainTexture = demotex;
 		imagePlane.GetComponent<Renderer> ().material.mainTexture = demotex;
 
-		//Texture demotex = Resources.Load (texName) as Texture;
 		//
 
 		dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
@@ -163,7 +169,7 @@ public class floatingPage : MonoBehaviour {
 
 		//
 		imagePlane.gameObject.SetActive(true);
-		cube.gameObject.SetActive(true);
+		docVolume.gameObject.SetActive(true);
 		DestroyObject (GameObject.Find(currentTextureName));
 		DestroyObject (GameObject.Find("backgroundPlane"));
 
