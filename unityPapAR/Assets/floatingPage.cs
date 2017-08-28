@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using Lean.Touch;
 
 public class floatingPage : MonoBehaviour {
 
 
 	public UnityEngine.UI.Text dispText2;
 	public string currentTextureName = "DemoDocTexture";
+	public int docCount = 0;
 	//public Texture demotex = Resources.Load ("DemoDocTexture") as Texture;
 	public float pageWidth = 1f;
 	public float pageHight = 1f;
@@ -15,12 +18,93 @@ public class floatingPage : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		
+		RaycastHit hit = new RaycastHit();
+		for (int i = 0; i < LeanTouch.Fingers.Count; ++i) {
+			Debug.Log ("clickupdate............." + i);
+			//if (Input.GetTouch (i).phase.Equals (TouchPhase.Ended)) {
+			if (!LeanTouch.Fingers[i].StartedOverGui && LeanTouch.Fingers[i].Up) {
+				Debug.Log ("LEAN OFF"); // + LeanTouch.Fingers[i].LastScreenPosition);
+					// Construct a ray from the current touch coordinates
+				//Ray ray = Camera.allCameras [0].ScreenPointToRay (Input.GetTouch (i).position);
+				Ray ray = Camera.allCameras [0].ScreenPointToRay (LeanTouch.Fingers[i].ScreenPosition);
+
+				if (Physics.Raycast(ray, out hit)) {
+					//hit.transform.gameObject.SendMessage("OnMouseDown");
+					var clickTarget = hit.transform.name;
+					var clickObject = hit.collider.name;
+					Debug.Log ("HiT!!!" + clickTarget);
+					dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
+					dispText2.text = "Clicked " + clickTarget + ", " + clickObject;
+				}
+
+				handleClick (ray, hit); //http://answers.unity3d.com/questions/332085/how-do-you-make-an-object-respond-to-a-click-in-c.html
+			}
+			if (LeanTouch.Fingers [i].IsOverGui && LeanTouch.Fingers[i].Up) {
+				Debug.Log ("LEAN ON UI");
+			}
+
+		}
+		/**
+		Debug.Log ("clickupdate2.............");
+		if (Input.GetMouseButtonDown(0)) {
+			Debug.Log ("Mouse Down! MIAU!");
+			Ray ray = Camera.allCameras[0].ScreenPointToRay(Input.mousePosition);
+			if (!EventSystem.current.IsPointerOverGameObject()) {
+				handleClick (ray, hit);
+				}
+		}
+		**/
+	}
+
+	public void handleClick (Ray ray, RaycastHit hit){
+		if (Physics.Raycast(ray, out hit)) {
+			//hit.transform.gameObject.SendMessage("OnMouseDown");
+			var clickTarget = hit.collider.gameObject;
+			var clickObject = hit.collider.name;
+			Debug.Log ("Object : " + clickObject);
+			Debug.Log ("Parent : " + clickTarget.transform.parent.name);
+
+			//
+			dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
+			var texName = hit.collider.gameObject.GetComponentInChildren<Renderer> ().material.mainTexture.name;
+			dispText2.text = "Clicked " + clickTarget.transform.parent.name + ", " + clickObject + ", " +texName;
+			//
+			if (clickTarget.name == "MenuButton"){
+				return;
+			}
+			if (clickTarget.transform.parent.transform.parent.name == "ImageTarget") {
+				var scriptHolderObject = GameObject.FindObjectOfType (typeof(floatingPage)) as floatingPage; //https://forum.unity3d.com/threads/calling-function-from-other-scripts-c.57072/
+				Debug.Log ("Bis hier her!!!");
+				scriptHolderObject.takePage (texName);
+				DestroyObject (clickTarget.transform.parent.gameObject);
+			}
+			if (clickTarget.name == "floatingImg") {
+				createSelectedPage (clickTarget);
+				DestroyObject (GameObject.Find("floatingImg"));
+
+			}
+
+			addInfo (clickObject);
+		}
+	}
+
+	public void addInfo(string clckPage){
+		Debug.Log ("Display Infos...");
+		/**
+		GameObject clickedPage =  GameObject.Find (clckPage);
+		GameObject lable = GameObject.CreatePrimitive(PrimitiveType.Plane);
+		lable.transform.parent = clickedPage.transform;
+		lable.transform.localEulerAngles = new Vector3 (90.0f, 0.0f, 180.0f);
+		lable.transform.localPosition = new Vector3 (0.05f, 0f, 0f);
+		dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
+		dispText2.text = "Lable: " + lable.transform.parent.name;
+		**/
+
 	}
 
 	public void setPalcementMode (bool threed){
@@ -60,16 +144,15 @@ public class floatingPage : MonoBehaviour {
 			pageHight = height;
 			pageWidth = demotex.width * sizeDiff;
 		}
-			
-			
+
+
 		floatingImagePlane.GetComponent<Renderer> ().material.mainTexture = demotex;
-		floatingImagePlane.name = texName;
+		floatingImagePlane.name = "floatingImg";
 		//floatingImagePlane.transform.localScale = new Vector3(demotex.width/100000f, 0.005f, demotex.height/100000f);
 		floatingImagePlane.transform.localScale = new Vector3(pageWidth/100f, 0.005f, pageHight/100f);
 		//floatingImagePlane.transform.localPosition = new Vector3(Camera.allCameras[0].transform.position.x, Camera.allCameras[0].transform.position.y, Camera.allCameras[0].transform.position.z);
 
 		floatingImagePlane.transform.parent = Camera.allCameras[0].transform;
-		//floatingImagePlane.transform.parent = GameObject.Find("floatingBackgroundPanel").transform;
 
 		floatingImagePlane.transform.localEulerAngles = Camera.allCameras[0].transform.eulerAngles;
 		floatingImagePlane.transform.localEulerAngles = new Vector3 (90f, 0f, 180f);
@@ -121,13 +204,16 @@ public class floatingPage : MonoBehaviour {
 
 	}
 
-	public void createSelectedPage () {
+	public void createSelectedPage (GameObject selectedPage) {
 		Debug.Log ("Placeing a Page...");
+		docCount = ++docCount;
+		string docName = "Document" + docCount;
 		GameObject ImgTarget = GameObject.Find ("ImageTarget");
 		Plane targetPlane = new Plane (ImgTarget.transform.up, ImgTarget.transform.position);
 		GameObject docVolume = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		GameObject imagePlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-		Texture demotex = Resources.Load (currentTextureName) as Texture;
+		//Texture demotex = Resources.Load (currentTextureName) as Texture;
+		Texture demotex = Resources.Load (selectedPage.GetComponent<Renderer> ().material.mainTexture.name) as Texture;
 		var height = 2.0f * Mathf.Tan(0.5f * Camera.allCameras[0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
 		var width = height * Screen.width / Screen.height;
 		Vector3 pagePos = new Vector3 (Camera.allCameras [0].transform.position.x, Camera.allCameras [0].transform.position.y, Camera.allCameras [0].transform.position.z);
@@ -137,8 +223,8 @@ public class floatingPage : MonoBehaviour {
 		float camRotY = Camera.allCameras [0].transform.eulerAngles.y;
 
 		if (!threeD) {
-			foreach (Touch touch in Input.touches) {
-				Ray ray = Camera.allCameras [0].ScreenPointToRay (touch.position);
+			foreach (LeanFinger touch in LeanTouch.Fingers) {
+				Ray ray = Camera.allCameras [0].ScreenPointToRay (touch.ScreenPosition);
 				float dist = 0.0f;
 				targetPlane.Raycast (ray, out dist);
 				pagePos = ray.GetPoint (dist);
@@ -151,14 +237,19 @@ public class floatingPage : MonoBehaviour {
 		docVolume.transform.localPosition = pagePos;
 		docVolume.transform.localEulerAngles = pageAngle;
 		docVolume.transform.Translate (pageDist);
+		docVolume.name = docName;
+		docVolume.transform.parent = GameObject.Find("ImageTarget").transform;
 
 
 		imagePlane.transform.parent = docVolume.transform;
-		imagePlane.transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
-		imagePlane.transform.localScale = new Vector3 (0.1f, 0.1f, 0.1f);
+		//imagePlane.transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
 		imagePlane.transform.localEulerAngles = coverAngle;
-		float coverDist = pageVol / 2 + 0.0001f;
-		imagePlane.transform.Translate (0.0f, coverDist, 0.0f);
+		float coverDist = 0.501f;
+		//imagePlane.transform.Translate (0.0f, coverDist, 0.0f);
+		imagePlane.transform.localPosition = new Vector3 (0.0f, 0.0f, -coverDist);
+		imagePlane.transform.localScale = new Vector3 (0.1f, 1f, 0.1f);
+
+		imagePlane.name = "Front" + docName;
 
 		imagePlane.GetComponent<Renderer> ().material.mainTexture = demotex;
 
@@ -168,10 +259,9 @@ public class floatingPage : MonoBehaviour {
 		dispText2.text = gameObject.name + "; " + imagePlane.transform.parent.name;
 
 		//
+		//DestroyObject (GameObject.Find("floatingImg"));
 		imagePlane.gameObject.SetActive(true);
 		docVolume.gameObject.SetActive(true);
-		DestroyObject (GameObject.Find(currentTextureName));
-		DestroyObject (GameObject.Find("backgroundPlane"));
 
 	}
 }
