@@ -46,6 +46,9 @@ public class floatingPage : MonoBehaviour {
 			}
 			if (LeanTouch.Fingers [i].IsOverGui && LeanTouch.Fingers[i].Up) {
 				Debug.Log ("LEAN ON UI");
+				//Debug.Log ("Hit? " + hit.collider.name);
+				//if (hit.collider.gameObject.transform.parent == GameObject.Find ("DocListButtons")) {
+				//}
 			}
 
 		}
