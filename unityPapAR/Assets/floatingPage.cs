@@ -27,7 +27,7 @@ public class floatingPage : MonoBehaviour {
 		for (int i = 0; i < LeanTouch.Fingers.Count; ++i) {
 			Debug.Log ("clickupdate............." + i);
 			//if (Input.GetTouch (i).phase.Equals (TouchPhase.Ended)) {
-			if (!LeanTouch.Fingers[i].StartedOverGui && LeanTouch.Fingers[i].Up) {
+			if (!LeanTouch.Fingers[i].StartedOverGui && LeanTouch.Fingers[i].Up && LeanTouch.Fingers[i].Tap) {
 				Debug.Log ("LEAN OFF"); // + LeanTouch.Fingers[i].LastScreenPosition);
 					// Construct a ray from the current touch coordinates
 				//Ray ray = Camera.allCameras [0].ScreenPointToRay (Input.GetTouch (i).position);
@@ -89,6 +89,7 @@ public class floatingPage : MonoBehaviour {
 			if (clickTarget.name == "floatingImg") {
 				createSelectedPage (clickTarget);
 				DestroyObject (GameObject.Find("floatingImg"));
+				dispText2.text = "Clicked on Floating Page";
 
 			}
 
@@ -175,6 +176,11 @@ public class floatingPage : MonoBehaviour {
 
 		//floatingImagePlane.transform.localScale = new Vector3 (Screen.width, 0.01f, Screen.height);
 
+
+		floatingImagePlane.AddComponent<LeanScale> ();
+		floatingImagePlane.AddComponent<LeanTranslate> ();
+
+
 		//Color backGr = new Color (0.28f, 0.44f, 0.48f, 0.05f);
 		//Color backGr = new Color32 (72, 112, 123, 128);
 		//floatingImagePlaneBackground.GetComponent<Renderer> ().material.SetColor ("_Color", backGr);
@@ -209,6 +215,7 @@ public class floatingPage : MonoBehaviour {
 
 	public void createSelectedPage (GameObject selectedPage) {
 		Debug.Log ("Placeing a Page...");
+		Handheld.Vibrate ();
 		docCount = ++docCount;
 		string docName = "Document" + docCount;
 		GameObject ImgTarget = GameObject.Find ("ImageTarget");
