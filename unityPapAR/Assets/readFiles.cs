@@ -18,7 +18,9 @@ public class readFiles : MonoBehaviour {
 	public void displayTextures(){
 		//var textures = Resources.LoadAll("", typeof(Texture2D));
 		var textures = Resources.LoadAll("", typeof(Sprite));
-		GameObject docContainer = GameObject.Find ("DocListButtons");
+		//GameObject docContainer = GameObject.Find ("DocListButtons");
+
+		GameObject docContainer = GameObject.Find ("Content");
 		Debug.Log ("HELLO?!?!" + textures.Length);
 		Debug.Log ("COUNT! " + docContainer.transform.childCount);
 		if (docContainer.transform.childCount < 2 ){
@@ -29,9 +31,13 @@ public class readFiles : MonoBehaviour {
 				//pagePanel.GetComponent<Image> ().sprite = tex;
 				//pagePanel.name = tex.name;
 
-				var btn = GUIElement.Instantiate (GameObject.Find ("PageButton"), docContainer.transform);
+				//var btn = GUIElement.Instantiate (GameObject.Find ("PageButton"), docContainer.transform);
+				var doc = GUIElement.Instantiate (GameObject.Find ("DocumentPanel"), docContainer.transform);
+				var btn = doc.transform.GetChild (0);
 				btn.GetComponent<Image> ().sprite = tex;
 				btn.name = tex.name;
+				var docName = doc.transform.GetChild (1).transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+				docName.text = tex.name;
 				//var btn = GUIElement.Instantiate(GameObject.Find("Button"), docContainer.transform);
 				//Texture docTex = Resources.Load (tex.name) as Texture2D;
 				//btn.GetComponent<Image> ().material.mainTexture = docTex;
@@ -41,7 +47,8 @@ public class readFiles : MonoBehaviour {
 				//Debug.Log ("?!?! " + btn.transform.GetChild (0).GetComponent<RawImage> ().texture.wrapMode);
 
 			}
-			GameObject.Destroy (GameObject.Find ("PageButton"));
+			//GameObject.Destroy (GameObject.Find ("PageButton"));
+			GameObject.Destroy (GameObject.Find ("DocumentPanel"));
 		}
 	}
 

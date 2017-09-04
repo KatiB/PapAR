@@ -53,7 +53,7 @@ namespace Lean.Touch
 			Scale(scale, screenCenter);
 		}
 
-		private void Scale(float scale, Vector2 screenCenter)
+		public void Scale(float scale, Vector2 screenCenter)
 		{
 			// Make sure the scale is valid
 			if (scale > 0.0f)
