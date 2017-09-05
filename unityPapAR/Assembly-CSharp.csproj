@@ -134,6 +134,7 @@
      <Compile Include="Assets\floatingPage.cs" />
      <Compile Include="Assets\placeOnDesk.cs" />
      <Compile Include="Assets\readFiles.cs" />
+     <Compile Include="Assets\uiAction.cs" />
      <None Include="Assets\Plugins\Android\AndroidManifest.xml" />
      <None Include="Assets\LeanTouch\Examples\Fonts\OFL.txt" />
      <None Include="Assets\Vuforia\Shaders\ColoredLines.shader" />

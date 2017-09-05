@@ -7,10 +7,17 @@ using Lean.Touch;
 public class floatingPage : MonoBehaviour {
 
 
+	//UI Elements:
+	public GameObject menU;
+	public uiAction menuControl;
 	public UnityEngine.UI.Text dispText2;
+
+	//Game Elements:
+	public Camera arCam;
+
+	//Variables:
 	public string currentTextureName = "DemoDocTexture";
 	public int docCount = 0;
-	//public Texture demotex = Resources.Load ("DemoDocTexture") as Texture;
 	public float pageWidth = 1f;
 	public float pageHight = 1f;
 	public float pageVol = 0.008f;
@@ -18,11 +25,15 @@ public class floatingPage : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		menU = GameObject.Find ("MenuUICanvas");
+		menuControl = menU.GetComponent<uiAction> ();
+		arCam = Camera.allCameras [0];
 
 	}
 
 	// Update is called once per frame
 	void Update () {
+		
 		RaycastHit hit = new RaycastHit();
 		for (int i = 0; i < LeanTouch.Fingers.Count; ++i) {
 			Debug.Log ("clickupdate............." + i);
@@ -31,8 +42,8 @@ public class floatingPage : MonoBehaviour {
 			if (!LeanTouch.Fingers[i].StartedOverGui && LeanTouch.Fingers[i].Tap) {
 					Debug.Log ("LEAN OFF"); // + LeanTouch.Fingers[i].LastScreenPosition);
 					// Construct a ray from the current touch coordinates
-				//Ray ray = Camera.allCameras [0].ScreenPointToRay (Input.GetTouch (i).position);
-				Ray ray = Camera.allCameras [0].ScreenPointToRay (LeanTouch.Fingers[i].ScreenPosition);
+				//Ray ray = arCam.ScreenPointToRay (Input.GetTouch (i).position);
+				Ray ray = arCam.ScreenPointToRay (LeanTouch.Fingers[i].ScreenPosition);
 
 				if (Physics.Raycast(ray, out hit)) {
 					//hit.transform.gameObject.SendMessage("OnMouseDown");
@@ -47,7 +58,7 @@ public class floatingPage : MonoBehaviour {
 			}
 			/**if (LeanTouch.Fingers [i].Swipe) {
 				var floatPage = GameObject.Find ("floatingImg");
-				floatPage.transform.Translate (Vector3.left * Time.deltaTime, Camera.allCameras [0].transform);
+				floatPage.transform.Translate (Vector3.left * Time.deltaTime, arCam.transform);
 				DestroyObject (floatPage);
 
 			}**/
@@ -92,12 +103,19 @@ public class floatingPage : MonoBehaviour {
 				var scriptHolderObject = GameObject.FindObjectOfType (typeof(floatingPage)) as floatingPage; //https://forum.unity3d.com/threads/calling-function-from-other-scripts-c.57072/
 				Debug.Log ("Bis hier her!!!");
 				scriptHolderObject.takePage (texName);
+
+				//var mainMen = GameObject.Find ("Menu");
+				menuControl.closeMenu ();
+				//	mainMen.SetActive (false);
+				//	var menuButton = GameObject.Find ("MenuUICanvas").transform.Find ("MenuButton").gameObject;
+				//	menuButton.SetActive (true);
+
 				DestroyObject (clickTarget.transform.parent.gameObject);
 			}
 			if (clickTarget.name == "floatingImg") {
 				createSelectedPage (clickTarget);
-				AudioSource audio = gameObject.AddComponent<AudioSource>();
-				audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/paperrustle"));
+				AudioSource audio = gameObject.GetComponent<AudioSource>();
+				audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/paperrustle"));	//!!Quelle
 				DestroyObject (GameObject.Find("floatingImg"));
 				//dispText2.text = "Clicked on Floating Page";
 
@@ -128,7 +146,7 @@ public class floatingPage : MonoBehaviour {
 	public void takePage (string texName) {
 		currentTextureName = texName;
 		//Texture demotex = Resources.Load (currentTextureName) as Texture;
-
+		dropOldPage ();
 		dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
 		//GameObject floatingImgBtn = gameObject.transform.Find ("activePageButton").gameObject;
 		//GameObject floatingImg = floatingImgBtn.transform.Find ("ActiveImagePanel").gameObject;
@@ -149,7 +167,7 @@ public class floatingPage : MonoBehaviour {
 		//var height = 2.0f * Mathf.Tan(0.5f * Camera.allCameras[0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
 		//var width = height * Screen.width / Screen.height;
 
-		var height = 2.0f * Mathf.Tan (0.5f * Camera.allCameras [0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
+		var height = 2.0f * Mathf.Tan (0.5f * arCam.fieldOfView * Mathf.Deg2Rad) + 0.4f;
 		var width = height * Screen.width / Screen.height;
 
 		if (Screen.width < Screen.height) {
@@ -165,8 +183,6 @@ public class floatingPage : MonoBehaviour {
 
 		floatingImagePlane.GetComponent<Renderer> ().material.mainTexture = demotex;
 		floatingImagePlane.name = "floatingImg";
-		//floatingImagePlane.transform.localScale = new Vector3(demotex.width/100000f, 0.005f, demotex.height/100000f);
-		//floatingImagePlane.transform.localScale = new Vector3(pageWidth/100f, 0.005f, pageHight/100f);
 
 		floatingImagePlane.transform.localScale = new Vector3(pageWidth/100f, 1.0f, pageHight/100f );
 
@@ -179,21 +195,10 @@ public class floatingPage : MonoBehaviour {
 		//floatingImagePlane.transform.Translate (0.0f, -0.2f, 0.0f);
 		floatingImagePlane.transform.localPosition = new Vector3 (0, 0, 0.2f);
 		//floatingImagePlane.transform.SetPositionAndRotation (floatingImagePlane.transform.parent.position, floatingImagePlane.transform.parent.localRotation);
-		//floatingImagePlane.transform.localScale = new Vector3(demotex.width, 0.008f, demotex.height);
-		//floatingImagePlane.transform.localScale = new Vector3(0.008f, 0.008f, 0.005f);
-
-		//floatingImagePlane.transform.localScale = new Vector3(pageWidth/0.1f, 0.05f, pageHight/0.1f);
-		//floatingImagePlane.transform.localScale = new Vector3(pageWidth, 0.05f, pageHight);
-
-		//floatingImagePlane.transform.localEulerAngles = Camera.allCameras[0].transform.eulerAngles;
-		//floatingImagePlane.transform.localEulerAngles = new Vector3 (90f, 0f, 0f);
-		//floatingImagePlane.transform.Translate (0.0f, 0.0001f, 0.0f);
 
 
-		//floatingImagePlane.transform.localScale = new Vector3 (Screen.width, 0.01f, Screen.height);
-
-		floatingImagePlane.AddComponent<LeanTouchEvents> ();
-		var tevent = floatingImagePlane.GetComponent<LeanTouchEvents> ();
+		//floatingImagePlane.AddComponent<LeanTouchEvents> ();
+		//var tevent = floatingImagePlane.GetComponent<LeanTouchEvents> ();
 		dispText2.text = "Event: " + LeanGesture.GetPinchScale();
 		floatingImagePlane.AddComponent<LeanScale> ();
 		var scaler = floatingImagePlane.GetComponent<LeanScale> ();
@@ -212,6 +217,7 @@ public class floatingPage : MonoBehaviour {
 
 
 		floatingImagePlaneBackground.name = "floatingImgBackground";
+		floatingImagePlaneBackground.transform.localScale = new Vector3 (Screen.width * 3, 1.0f, Screen.height * 3);
 		floatingImagePlaneBackground.transform.parent = floatingImagePlane.transform;
 		//floatingImagePlaneBackground.transform.parent = Camera.allCameras[0].transform;
 		floatingImagePlaneBackground.transform.localEulerAngles = new Vector3 (0f, 0f, 0f);
@@ -224,11 +230,6 @@ public class floatingPage : MonoBehaviour {
 
 		floatingImagePlaneBackground.GetComponent<Renderer> ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 		floatingImagePlaneBackground.GetComponent<Renderer> ().receiveShadows = false;
-		//floatingImagePlaneBackground.GetComponent<Renderer> (). = false;
-		//
-
-		dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
-		//dispText2.text = Screen.width + "GNAAA!!" + width + ", " + height +" ";
 
 		//
 		floatingImagePlane.gameObject.SetActive(true);
@@ -252,15 +253,15 @@ public class floatingPage : MonoBehaviour {
 		Texture demotex = Resources.Load (selectedPage.GetComponent<Renderer> ().material.mainTexture.name) as Texture;
 		var height = 2.0f * Mathf.Tan(0.5f * Camera.allCameras[0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
 		var width = height * Screen.width / Screen.height;
-		Vector3 pagePos = new Vector3 (Camera.allCameras [0].transform.position.x, Camera.allCameras [0].transform.position.y, Camera.allCameras [0].transform.position.z);
-		Vector3 pageAngle = Camera.allCameras [0].transform.eulerAngles;
+		Vector3 pagePos = new Vector3 (arCam.transform.position.x, arCam.transform.position.y, arCam.transform.position.z);
+		Vector3 pageAngle = arCam.transform.eulerAngles;
 		Vector3 coverAngle = new Vector3 (90.0f, 0.0f, 180.0f);
 		Vector3 pageDist = new Vector3 (0.0f, 0.0f, 0.21f);
-		float camRotY = Camera.allCameras [0].transform.eulerAngles.y;
+		float camRotY = arCam.transform.eulerAngles.y;
 
 		if (!threeD) {
 			foreach (LeanFinger touch in LeanTouch.Fingers) {
-				Ray ray = Camera.allCameras [0].ScreenPointToRay (touch.ScreenPosition);
+				Ray ray = arCam.ScreenPointToRay (touch.ScreenPosition);
 				float dist = 0.0f;
 				targetPlane.Raycast (ray, out dist);
 				pagePos = ray.GetPoint (dist);
@@ -299,5 +300,9 @@ public class floatingPage : MonoBehaviour {
 		imagePlane.gameObject.SetActive(true);
 		docVolume.gameObject.SetActive(true);
 
+	}
+
+	public void dropOldPage (){
+		GameObject.Destroy (GameObject.Find ("floatingImg"));
 	}
 }

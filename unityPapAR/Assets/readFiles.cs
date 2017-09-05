@@ -5,9 +5,17 @@ using UnityEngine.UI;
 
 public class readFiles : MonoBehaviour {
 
+	//UI Elements:
+	public GameObject menU;
+	public uiAction menuControl;
+	public floatingPage pageControl;
+
 	// Use this for initialization
 	void Start () {
-		
+		menU = GameObject.Find ("MenuUICanvas");
+		menuControl = menU.GetComponent<uiAction> ();
+		pageControl = menU.GetComponent<floatingPage> ();
+
 	}
 	
 	// Update is called once per frame
@@ -25,7 +33,7 @@ public class readFiles : MonoBehaviour {
 		Debug.Log ("COUNT! " + docContainer.transform.childCount);
 		if (docContainer.transform.childCount < 2 ){
 			foreach (Sprite tex in textures) {
-				Debug.Log (tex.name);
+				//Debug.Log (tex.name);
 				//Sprite docTex = Resources.Load (tex.name) as Sprite;
 				//var pagePanel = GUIElement.Instantiate (GameObject.Find ("PagePreviewPanel"), docContainer.transform);
 				//pagePanel.GetComponent<Image> ().sprite = tex;
@@ -54,6 +62,8 @@ public class readFiles : MonoBehaviour {
 
 	public void executeClic (){
 		Debug.Log ("Bisher " + gameObject.name);
-		GameObject.Find ("MenuUICanvas").GetComponent<floatingPage> ().takePage (gameObject.name);
+		//pageControl.dropOldPage ();
+		pageControl.takePage (gameObject.name);
+		menuControl.closeMenu ();
 	}
 }
