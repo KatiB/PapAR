@@ -25,7 +25,7 @@ public class readFiles : MonoBehaviour {
 
 	public void displayTextures(){
 		//var textures = Resources.LoadAll("", typeof(Texture2D));
-		var textures = Resources.LoadAll("", typeof(Sprite));
+		var textures = Resources.LoadAll("Documents", typeof(Sprite));
 		//GameObject docContainer = GameObject.Find ("DocListButtons");
 
 		GameObject docContainer = GameObject.Find ("Content");
@@ -33,7 +33,7 @@ public class readFiles : MonoBehaviour {
 		Debug.Log ("COUNT! " + docContainer.transform.childCount);
 		if (docContainer.transform.childCount < 2 ){
 			foreach (Sprite tex in textures) {
-				//Debug.Log (tex.name);
+				Debug.Log (tex.name);
 				//Sprite docTex = Resources.Load (tex.name) as Sprite;
 				//var pagePanel = GUIElement.Instantiate (GameObject.Find ("PagePreviewPanel"), docContainer.transform);
 				//pagePanel.GetComponent<Image> ().sprite = tex;

@@ -116,6 +116,7 @@ public class floatingPage : MonoBehaviour {
 				createSelectedPage (clickTarget);
 				AudioSource audio = gameObject.GetComponent<AudioSource>();
 				audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/paperrustle"));	//!!Quelle
+				menuControl.hideDocDetails();
 				DestroyObject (GameObject.Find("floatingImg"));
 				//dispText2.text = "Clicked on Floating Page";
 
@@ -147,6 +148,7 @@ public class floatingPage : MonoBehaviour {
 		currentTextureName = texName;
 		//Texture demotex = Resources.Load (currentTextureName) as Texture;
 		dropOldPage ();
+		menuControl.showDocDetails (texName);
 		dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
 		//GameObject floatingImgBtn = gameObject.transform.Find ("activePageButton").gameObject;
 		//GameObject floatingImg = floatingImgBtn.transform.Find ("ActiveImagePanel").gameObject;
@@ -158,7 +160,7 @@ public class floatingPage : MonoBehaviour {
 		GameObject floatingImagePlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
 		GameObject floatingImagePlaneBackground = GameObject.CreatePrimitive(PrimitiveType.Plane);
 
-		Texture demotex = Resources.Load (currentTextureName) as Texture;
+		Texture demotex = Resources.Load ("Documents/" + currentTextureName) as Texture;
 
 		Material floatMat = Resources.Load("floatingMat", typeof(Material)) as Material;
 		floatingImagePlane.GetComponent<Renderer> ().material = floatMat;
@@ -250,7 +252,7 @@ public class floatingPage : MonoBehaviour {
 		GameObject imagePlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
 		imagePlane.GetComponent<Renderer> ().material = mat;
 		//Texture demotex = Resources.Load (currentTextureName) as Texture;
-		Texture demotex = Resources.Load (selectedPage.GetComponent<Renderer> ().material.mainTexture.name) as Texture;
+		//Texture demotex = Resources.Load (selectedPage.GetComponent<Renderer> ().material.mainTexture.name) as Texture;
 		var height = 2.0f * Mathf.Tan(0.5f * Camera.allCameras[0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
 		var width = height * Screen.width / Screen.height;
 		Vector3 pagePos = new Vector3 (arCam.transform.position.x, arCam.transform.position.y, arCam.transform.position.z);
@@ -288,7 +290,7 @@ public class floatingPage : MonoBehaviour {
 
 		imagePlane.name = "Front" + docName;
 
-		imagePlane.GetComponent<Renderer> ().material.mainTexture = demotex;
+		imagePlane.GetComponent<Renderer> ().material.mainTexture = selectedPage.GetComponent<Renderer> ().material.mainTexture;//demotex;
 
 		//
 
@@ -304,5 +306,12 @@ public class floatingPage : MonoBehaviour {
 
 	public void dropOldPage (){
 		GameObject.Destroy (GameObject.Find ("floatingImg"));
+	}
+
+	public void recenterPage (){
+		var handHeldPage = GameObject.Find ("floatingImg");
+		handHeldPage.transform.localPosition = new Vector3 (0, 0, 0.2f);
+		handHeldPage.transform.localScale = new Vector3(pageWidth/100f, 1.0f, pageHight/100f );
+		handHeldPage.transform.localEulerAngles = new Vector3 (90f, 0f, 180f);
 	}
 }
