@@ -113,7 +113,9 @@ public class floatingPage : MonoBehaviour {
 				DestroyObject (clickTarget.transform.parent.gameObject);
 			}
 			if (clickTarget.name == "floatingImg") {
-				createSelectedPage (clickTarget);
+				GameObject newPage = createSelectedPage (clickTarget);
+				//menuControl.fillListOfPlacedDocs ();
+				menuControl.addPlacedDocToList (newPage);
 				AudioSource audio = gameObject.GetComponent<AudioSource>();
 				audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/paperrustle"));	//!!Quelle
 				menuControl.hideDocDetails();
@@ -238,7 +240,7 @@ public class floatingPage : MonoBehaviour {
 
 	}
 
-	public void createSelectedPage (GameObject selectedPage) {
+	public GameObject createSelectedPage (GameObject selectedPage) {
 		Debug.Log ("Placeing a Page...");
 		AudioSource paperaudio = GetComponent<AudioSource>();
 		paperaudio.Play();
@@ -301,6 +303,7 @@ public class floatingPage : MonoBehaviour {
 		//DestroyObject (GameObject.Find("floatingImg"));
 		imagePlane.gameObject.SetActive(true);
 		docVolume.gameObject.SetActive(true);
+		return (imagePlane);
 
 	}
 

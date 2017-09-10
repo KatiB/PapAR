@@ -131,6 +131,9 @@
      <Compile Include="Assets\Vuforia\Scripts\WireframeTrackableEventHandler.cs" />
      <Compile Include="Assets\Vuforia\Scripts\WordBehaviour.cs" />
      <Compile Include="Assets\dispButtonType.cs" />
+     <Compile Include="Assets\docPointer.cs" />
+     <Compile Include="Assets\findDoc.cs" />
+     <Compile Include="Assets\findTarget.cs" />
      <Compile Include="Assets\floatingPage.cs" />
      <Compile Include="Assets\placeOnDesk.cs" />
      <Compile Include="Assets\readFiles.cs" />
