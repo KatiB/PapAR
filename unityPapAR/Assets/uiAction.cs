@@ -138,4 +138,10 @@ public class uiAction : MonoBehaviour {
 		//var point = pointer.GetComponent<docPointer> ();
 		//point.pointToDoc ();
 	}
+
+	public void cleanUp (){
+		foreach (Transform child in imgTargt.transform) {
+			GameObject.Destroy (child.gameObject);
+		}
+	}
 }

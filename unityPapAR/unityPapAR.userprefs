@@ -5,42 +5,22 @@
       <File FileName="Assets\Scripts\ModelPopsup.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\hidePage.cs" Line="1" Column="1" />
       <File FileName="Assets\Vuforia\Scripts\Internal\clickbehaviour.cs" Line="1" Column="1" />
-      <File FileName="Assets\floatingPage.cs" Line="250" Column="49" />
+      <File FileName="Assets\floatingPage.cs" Line="128" Column="9" />
       <File FileName="Assets\Vuforia\Scripts\DefaultTrackableEventHandler.cs" Line="1" Column="1" />
       <File FileName="Assets\dispButtonType.cs" Line="1" Column="1" />
       <File FileName="Assets\placeOnDesk.cs" Line="1" Column="1" />
       <File FileName="Assets\LeanTouch\Scripts\LeanTouch.cs" Line="1" Column="1" />
       <File FileName="Assets\LeanTouch\Scripts\LeanFinger.cs" Line="1" Column="1" />
-      <File FileName="Assets\readFiles.cs" Line="36" Column="5" />
+      <File FileName="Assets\readFiles.cs" Line="1" Column="1" />
       <File FileName="Assets\LeanTouch\Scripts\LeanGesture.cs" Line="1" Column="1" />
       <File FileName="Assets\Vuforia\Scripts\Internal\reaction.cs" Line="1" Column="1" />
       <File FileName="Assets\LeanTouch\Examples\Scripts\LeanScale.cs" Line="1" Column="1" />
       <File FileName="Assets\LeanTouch\Examples\Scripts\LeanTouchEvents.cs" Line="1" Column="1" />
-      <File FileName="Assets\uiAction.cs" Line="97" Column="62" />
-      <File FileName="Assets\findDoc.cs" Line="15" Column="3" />
-      <File FileName="Assets\docPointer.cs" Line="20" Column="53" />
-      <File FileName="Assets\findTarget.cs" Line="43" Column="1" />
+      <File FileName="Assets\uiAction.cs" Line="1" Column="1" />
+      <File FileName="Assets\findDoc.cs" Line="1" Column="1" />
+      <File FileName="Assets\docPointer.cs" Line="1" Column="1" />
+      <File FileName="Assets\findTarget.cs" Line="1" Column="1" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State name="__root__">
-          <Node name="unityPapAR" expanded="True">
-            <Node name="Assembly-CSharp" expanded="True">
-              <Node name="floatingPage.cs" selected="True" />
-            </Node>
-            <Node name="Assembly-CSharp-Editor" expanded="True" />
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State />
-      </Pad>
-      <Pad Id="MonoDevelop.NUnit.TestPad">
-        <State name="__root__">
-          <Node name="unityPapAR" expanded="True" selected="True" />
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

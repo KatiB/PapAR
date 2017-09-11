@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Lean.Touch;
 
@@ -11,6 +12,7 @@ public class floatingPage : MonoBehaviour {
 	public GameObject menU;
 	public uiAction menuControl;
 	public UnityEngine.UI.Text dispText2;
+	public Slider slide;
 
 	//Game Elements:
 	public Camera arCam;
@@ -20,8 +22,11 @@ public class floatingPage : MonoBehaviour {
 	public int docCount = 0;
 	public float pageWidth = 1f;
 	public float pageHight = 1f;
+	public float pageSizefactor = 1f;
 	public float pageVol = 0.008f;
 	public bool threeD = true;
+	public bool soundf = true;
+	public bool hapticf = true;
 
 	// Use this for initialization
 	void Start () {
@@ -116,8 +121,11 @@ public class floatingPage : MonoBehaviour {
 				GameObject newPage = createSelectedPage (clickTarget);
 				//menuControl.fillListOfPlacedDocs ();
 				menuControl.addPlacedDocToList (newPage);
-				AudioSource audio = gameObject.GetComponent<AudioSource>();
-				audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/paperrustle"));	//!!Quelle
+				/**
+				if (soundf){
+					AudioSource audio = gameObject.GetComponent<AudioSource>();
+					audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/paperrustle"));	//!!Quelle
+				}**/
 				menuControl.hideDocDetails();
 				DestroyObject (GameObject.Find("floatingImg"));
 				//dispText2.text = "Clicked on Floating Page";
@@ -141,11 +149,7 @@ public class floatingPage : MonoBehaviour {
 		**/
 
 	}
-
-	public void setPalcementMode (bool threed){
-		threeD = threed;
-	}
-
+		
 	public void takePage (string texName) {
 		currentTextureName = texName;
 		//Texture demotex = Resources.Load (currentTextureName) as Texture;
@@ -242,9 +246,14 @@ public class floatingPage : MonoBehaviour {
 
 	public GameObject createSelectedPage (GameObject selectedPage) {
 		Debug.Log ("Placeing a Page...");
-		AudioSource paperaudio = GetComponent<AudioSource>();
-		paperaudio.Play();
-		Handheld.Vibrate ();
+		if (soundf) {
+			Debug.Log ("SOUND!");
+			AudioSource paperaudio = GetComponent<AudioSource> ();
+			paperaudio.Play ();
+		}
+		if (hapticf) {
+			Handheld.Vibrate ();
+		}
 		docCount = ++docCount;
 		string docName = "Document" + docCount;
 		Material mat = Resources.Load("floatingMat", typeof(Material)) as Material;
@@ -272,9 +281,10 @@ public class floatingPage : MonoBehaviour {
 			}
 			pageAngle = new Vector3 (90.0f, camRotY, 0.0f);
 			pageDist = new Vector3 (0.0f, 0.0f, 0.0f);
+			//or change page width and height here for 2D only?
 		}
 
-		docVolume.transform.localScale = new Vector3(pageWidth/10f, pageHight/10f, pageVol);
+		docVolume.transform.localScale = new Vector3((pageWidth/10f)*pageSizefactor, (pageHight/10f)*pageSizefactor, pageVol);
 		docVolume.transform.localPosition = pagePos;
 		docVolume.transform.localEulerAngles = pageAngle;
 		docVolume.transform.Translate (pageDist);
@@ -316,5 +326,30 @@ public class floatingPage : MonoBehaviour {
 		handHeldPage.transform.localPosition = new Vector3 (0, 0, 0.2f);
 		handHeldPage.transform.localScale = new Vector3(pageWidth/100f, 1.0f, pageHight/100f );
 		handHeldPage.transform.localEulerAngles = new Vector3 (90f, 0f, 180f);
+	}
+
+	//Toggle if the document is placed on the desk or in Midair
+	public void setPlacementMode (){
+		threeD = !threeD;
+	}
+
+	public void setSoundFeedback (){
+		soundf = !soundf;
+		Debug.Log ("SetSound " + soundf);
+	}
+
+	public void setHapticFeedback (){
+		hapticf = !hapticf;
+	}
+
+	//Adjust the scaling factor regulating the size of the documents placed on the desk
+	public void setPageScale (){
+		if (slide == null) {
+			slide = GameObject.Find ("DocSizeSlider").GetComponent<Slider>();
+		}
+		Debug.Log ("Slidey?" + slide.GetType ());
+		float scal = slide.value;
+		Debug.Log ("SLIDE" + scal);
+		pageSizefactor = scal;
 	}
 }
