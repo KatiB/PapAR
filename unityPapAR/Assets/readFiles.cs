@@ -15,6 +15,7 @@ public class readFiles : MonoBehaviour {
 		menU = GameObject.Find ("MenuUICanvas");
 		menuControl = menU.GetComponent<uiAction> ();
 		pageControl = menU.GetComponent<floatingPage> ();
+		//displayTextures ();
 
 	}
 	

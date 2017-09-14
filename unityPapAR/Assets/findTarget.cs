@@ -21,9 +21,11 @@ public class findTarget : MonoBehaviour {
 
 	public void createPointer(){
 		destroyPointer ();
-		var pointer = GameObject.Instantiate (Resources.Load ("PointerCube") as GameObject);
+		var pointer = GameObject.Instantiate (Resources.Load ("PointerSphere") as GameObject);
 		pointer.transform.parent = Camera.allCameras[0].transform;
+		var screenborder = new Vector3 (Screen.width / 4, Screen.height/ 8f, 0.2f);
 		pointer.transform.localPosition = new Vector3 (0, 0.1f, 0.2f);
+		//pointer.transform.localPosition = Camera.allCameras [0].ScreenToWorldPoint(screenborder);
 		pointer.AddComponent<docPointer> ();
 		var point = pointer.GetComponent<docPointer> ();
 		point.pointToDoc (gameObject.name);
@@ -44,9 +46,17 @@ public class findTarget : MonoBehaviour {
 	}
 
 	public void destroyPointer (){
-		var currentPointer = GameObject.Find ("PointerCube(Clone)");
+		var currentPointer = GameObject.Find ("PointerSphere(Clone)");
+		var curPointer = Camera.allCameras [0].transform.Find ("PointerSphere(Clone)");
+		if (curPointer != null) {
+			currentPointer = Camera.allCameras [0].transform.Find ("PointerSphere(Clone)").gameObject;
+		}
+		var currentHighlight = GameObject.Find ("highlightPlane(Clone)");
 		if (currentPointer != null) {
 			GameObject.Destroy (currentPointer);
+		}
+		if (currentHighlight != null) {
+			GameObject.Destroy (currentHighlight);
 		}
 	}
 }

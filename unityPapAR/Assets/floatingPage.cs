@@ -16,6 +16,8 @@ public class floatingPage : MonoBehaviour {
 
 	//Game Elements:
 	public Camera arCam;
+	public GameObject centerHighlight;
+	public GameObject centredDoc;
 
 	//Scripts:
 
@@ -29,6 +31,8 @@ public class floatingPage : MonoBehaviour {
 	public bool threeD = true;
 	public bool soundf = true;
 	public bool hapticf = true;
+	public bool highlight = true;
+	public bool holdingPage = false;
 
 	// Use this for initialization
 	void Start () {
@@ -40,8 +44,13 @@ public class floatingPage : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		
+
+		if (highlight && !holdingPage) {
+			highlightCentredDoc ();
+		}
+
 		RaycastHit hit = new RaycastHit();
+
 		for (int i = 0; i < LeanTouch.Fingers.Count; ++i) {
 			Debug.Log ("clickupdate............." + i);
 			//if (Input.GetTouch (i).phase.Equals (TouchPhase.Ended)) {
@@ -90,6 +99,37 @@ public class floatingPage : MonoBehaviour {
 		**/
 	}
 
+	public void highlightCentredDoc(){
+		RaycastHit hitII = new RaycastHit();
+		var screenCenter = new Vector3 (Screen.width / 2, Screen.height / 2, 0);
+		Ray rayII = arCam.ScreenPointToRay (screenCenter);
+		/**
+		if (Physics.Raycast (rayII, out hitII)) {
+			Debug.Log ("Front!? " + hitII.collider.name.Contains ("Front"));
+			Debug.Log ("Center: " + centredDoc);
+			if (hitII.collider.name.Contains ("Front") && hitII.collider.gameObject != centredDoc) {
+				Debug.Log ("Front Uneaquel");
+				removeHighlight ();
+				centredDoc = hitII.collider.gameObject;
+				highlightDoc (centredDoc);
+			} else if (!hitII.collider.name.Contains ("Front")){
+				removeHighlight ();
+				centredDoc = null;
+			}
+		}else {
+			removeHighlight ();
+			centredDoc = null;
+		}**/
+		if (!Physics.Raycast (rayII, out hitII) || hitII.collider.gameObject != centredDoc) {
+			removeHighlight ();
+			if (hitII.collider.name.Contains ("Front")) {
+				centredDoc = hitII.collider.gameObject;
+				highlightDoc (centredDoc);
+			}
+				
+		}
+	}
+
 	public void handleClick (Ray ray, RaycastHit hit){
 		if (Physics.Raycast(ray, out hit)) {
 			//hit.transform.gameObject.SendMessage("OnMouseDown");
@@ -113,7 +153,7 @@ public class floatingPage : MonoBehaviour {
 				menuControl.removeTakenDocFromList (hit.collider.gameObject.transform.GetChild(0).name);
 				menuControl.closeMenu ();
 				DestroyObject (clickTarget);
-			} else if (clickTarget.transform.parent.transform.parent.name == "ImageTarget") {
+			} else if (clickTarget.transform.parent.transform.parent.name == "ImageTarget" && !holdingPage) {
 				//var scriptHolderObject = GameObject.FindObjectOfType (typeof(floatingPage)) as floatingPage; //https://forum.unity3d.com/threads/calling-function-from-other-scripts-c.57072/
 				//scriptHolderObject.takePage (texName);
 				var texName = hit.collider.gameObject.GetComponentInChildren<Renderer> ().material.mainTexture.name;
@@ -121,6 +161,8 @@ public class floatingPage : MonoBehaviour {
 				takePage (texName);
 				menuControl.removeTakenDocFromList (hit.collider.gameObject.name);
 				menuControl.closeMenu ();
+				removeHighlight ();
+				centredDoc = null;
 				DestroyObject (clickTarget.transform.parent.gameObject);
 			} else if (clickTarget.name == "floatingImg") {
 				GameObject newPage = createSelectedPage (clickTarget);
@@ -132,10 +174,24 @@ public class floatingPage : MonoBehaviour {
 				}**/
 				menuControl.hideDocDetails();
 				menuControl.menuButton.SetActive (true);
+				holdingPage = false;
 				DestroyObject (GameObject.Find("floatingImg"));
 			}
 
 			addInfo (clickObject);
+		}
+	}
+
+	public void highlightDoc (GameObject focussedPage){
+		GameObject highlightFrame = Resources.Load ("highlightPlane") as GameObject;
+		centerHighlight = GameObject.Instantiate (highlightFrame, focussedPage.transform.parent.transform);
+		centerHighlight.name = "centerHighlight";
+	}
+
+	public void removeHighlight() {
+		if (centerHighlight != null) {
+			Debug.Log ("DESTROY");
+			GameObject.Destroy (centerHighlight);
 		}
 	}
 
@@ -162,6 +218,7 @@ public class floatingPage : MonoBehaviour {
 		menuControl.menuButton.SetActive (false);
 		menuControl.searchHeader.SetActive (false);
 		GameObject.Destroy (GameObject.Find ("PointerCube(Clone)"));
+		holdingPage = true;
 		dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
 		//GameObject floatingImgBtn = gameObject.transform.Find ("activePageButton").gameObject;
 		//GameObject floatingImg = floatingImgBtn.transform.Find ("ActiveImagePanel").gameObject;
@@ -311,6 +368,12 @@ public class floatingPage : MonoBehaviour {
 
 		imagePlane.GetComponent<Renderer> ().material.mainTexture = selectedPage.GetComponent<Renderer> ().material.mainTexture;//demotex;
 
+		GameObject pointerTarget = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		pointerTarget.transform.localScale = new Vector3((pageWidth/100f)*pageSizefactor, (pageHight/100f)*pageSizefactor, pageVol/10);
+		pointerTarget.transform.localPosition = pagePos;
+		pointerTarget.transform.localEulerAngles = pageAngle;
+		pointerTarget.transform.Translate (pageDist);
+		pointerTarget.transform.parent = docVolume.transform;
 		//
 
 		dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
@@ -333,6 +396,16 @@ public class floatingPage : MonoBehaviour {
 		handHeldPage.transform.localPosition = new Vector3 (0, 0, 0.2f);
 		handHeldPage.transform.localScale = new Vector3(pageWidth/100f, 1.0f, pageHight/100f );
 		handHeldPage.transform.localEulerAngles = new Vector3 (90f, 0f, 180f);
+	}
+
+	//if page is dropped via delete button
+	public void setHoldingState(){
+		holdingPage = false;
+	}
+
+	//toggle if the document in the centre of the screen gets highlighted
+	public void setHighlitingStile() {
+		highlight = !highlight;
 	}
 
 	//Toggle if the document is placed on the desk or in Midair
