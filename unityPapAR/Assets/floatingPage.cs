@@ -17,6 +17,8 @@ public class floatingPage : MonoBehaviour {
 	//Game Elements:
 	public Camera arCam;
 
+	//Scripts:
+
 	//Variables:
 	public string currentTextureName = "DemoDocTexture";
 	public int docCount = 0;
@@ -45,8 +47,8 @@ public class floatingPage : MonoBehaviour {
 			//if (Input.GetTouch (i).phase.Equals (TouchPhase.Ended)) {
 			//if (!LeanTouch.Fingers[i].StartedOverGui && LeanTouch.Fingers[i].Up && LeanTouch.Fingers[i].Tap) {
 			if (!LeanTouch.Fingers[i].StartedOverGui && LeanTouch.Fingers[i].Tap) {
-					Debug.Log ("LEAN OFF"); // + LeanTouch.Fingers[i].LastScreenPosition);
-					// Construct a ray from the current touch coordinates
+				Debug.Log ("LEAN OFF"); // + LeanTouch.Fingers[i].LastScreenPosition);
+				// Construct a ray from the current touch coordinates
 				//Ray ray = arCam.ScreenPointToRay (Input.GetTouch (i).position);
 				Ray ray = arCam.ScreenPointToRay (LeanTouch.Fingers[i].ScreenPosition);
 
@@ -98,28 +100,30 @@ public class floatingPage : MonoBehaviour {
 
 			//
 			dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
-			var texName = hit.collider.gameObject.GetComponentInChildren<Renderer> ().material.mainTexture.name;
-			dispText2.text = "Clicked " + clickTarget.transform.parent.name + ", " + clickObject + ", " + texName;
+			dispText2.text = "Clicked " + clickTarget.transform.parent.name + ", " + clickObject + ", ";
 			//
 			if (clickTarget.name == "MenuButton"){
+				Debug.Log ("Komme ich hier her?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!");
 				return;
 			}
-			if (clickTarget.transform.parent.transform.parent.name == "ImageTarget") {
-				var scriptHolderObject = GameObject.FindObjectOfType (typeof(floatingPage)) as floatingPage; //https://forum.unity3d.com/threads/calling-function-from-other-scripts-c.57072/
+			if (clickTarget.transform.parent.name == "ImageTarget") {
+				var texName = hit.collider.gameObject.transform.GetChild(0).GetComponentInChildren<Renderer> ().material.mainTexture.name;
 				Debug.Log ("Bis hier her!!!");
-				scriptHolderObject.takePage (texName);
-
-				//var mainMen = GameObject.Find ("Menu");
+				takePage (texName);
+				menuControl.removeTakenDocFromList (hit.collider.gameObject.transform.GetChild(0).name);
 				menuControl.closeMenu ();
-				//	mainMen.SetActive (false);
-				//	var menuButton = GameObject.Find ("MenuUICanvas").transform.Find ("MenuButton").gameObject;
-				//	menuButton.SetActive (true);
-
+				DestroyObject (clickTarget);
+			} else if (clickTarget.transform.parent.transform.parent.name == "ImageTarget") {
+				//var scriptHolderObject = GameObject.FindObjectOfType (typeof(floatingPage)) as floatingPage; //https://forum.unity3d.com/threads/calling-function-from-other-scripts-c.57072/
+				//scriptHolderObject.takePage (texName);
+				var texName = hit.collider.gameObject.GetComponentInChildren<Renderer> ().material.mainTexture.name;
+				Debug.Log ("Bis hier her!!!");
+				takePage (texName);
+				menuControl.removeTakenDocFromList (hit.collider.gameObject.name);
+				menuControl.closeMenu ();
 				DestroyObject (clickTarget.transform.parent.gameObject);
-			}
-			if (clickTarget.name == "floatingImg") {
+			} else if (clickTarget.name == "floatingImg") {
 				GameObject newPage = createSelectedPage (clickTarget);
-				//menuControl.fillListOfPlacedDocs ();
 				menuControl.addPlacedDocToList (newPage);
 				/**
 				if (soundf){
@@ -127,9 +131,8 @@ public class floatingPage : MonoBehaviour {
 					audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/paperrustle"));	//!!Quelle
 				}**/
 				menuControl.hideDocDetails();
+				menuControl.menuButton.SetActive (true);
 				DestroyObject (GameObject.Find("floatingImg"));
-				//dispText2.text = "Clicked on Floating Page";
-
 			}
 
 			addInfo (clickObject);
@@ -155,6 +158,10 @@ public class floatingPage : MonoBehaviour {
 		//Texture demotex = Resources.Load (currentTextureName) as Texture;
 		dropOldPage ();
 		menuControl.showDocDetails (texName);
+		menuControl.mainMen.SetActive (false);
+		menuControl.menuButton.SetActive (false);
+		menuControl.searchHeader.SetActive (false);
+		GameObject.Destroy (GameObject.Find ("PointerCube(Clone)"));
 		dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
 		//GameObject floatingImgBtn = gameObject.transform.Find ("activePageButton").gameObject;
 		//GameObject floatingImg = floatingImgBtn.transform.Find ("ActiveImagePanel").gameObject;

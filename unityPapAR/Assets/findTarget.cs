@@ -44,6 +44,9 @@ public class findTarget : MonoBehaviour {
 	}
 
 	public void destroyPointer (){
-		GameObject.Destroy (GameObject.Find ("PointerCube(Clone)"));
+		var currentPointer = GameObject.Find ("PointerCube(Clone)");
+		if (currentPointer != null) {
+			GameObject.Destroy (currentPointer);
+		}
 	}
 }

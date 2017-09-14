@@ -11,6 +11,7 @@ public class uiAction : MonoBehaviour {
 	public GameObject menuButton;
 	public GameObject docDetail;
 	public GameObject deskDocContainer;
+	public GameObject searchHeader;
 	public GameObject trackingLostIndicator;
 	public GameObject pointer;
 	public UnityEngine.UI.Text dispText2;
@@ -23,7 +24,8 @@ public class uiAction : MonoBehaviour {
 		mainMen = uiHolder.transform.Find ("Menu").gameObject;
 		menuButton = uiHolder.transform.Find ("MenuButton").gameObject;
 		docDetail = uiHolder.transform.Find ("floatingPageHolderPanel").gameObject;
-		//deskDocContainer = uiHolder.transform.Find ("DeskContent").gameObject;
+		deskDocContainer = uiHolder.transform.Find ("DeskList").gameObject.transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).gameObject;
+		searchHeader = uiHolder.transform.Find ("SearchDocHeaderPanel").gameObject;
 		trackingLostIndicator = uiHolder.transform.Find ("WarningPanel").gameObject;
 		//pointer = uiHolder.transform.Find ("PointerCube").gameObject;
 
@@ -110,6 +112,22 @@ public class uiAction : MonoBehaviour {
 		//var dcPoint = btn.GetComponent<docPointer> ();
 		//dcPoint.setTarget (target);
 
+	}
+
+	//remove Document from Desk overview List when it is picked up
+	public void removeTakenDocFromList(string ListElName) {
+		Debug.Log ("Remove " + ListElName + "Container: " + deskDocContainer.name);
+		foreach (Transform child in deskDocContainer.transform) {
+			Debug.Log ("DeskChild: " + child.name);
+			if (child.transform.GetChild(0).name == ListElName){
+				Debug.Log (child.transform.Find (ListElName).name);
+				GameObject.Destroy (child.transform.Find (ListElName).transform.parent.gameObject);
+			}
+		}
+		//uiHolder.transform.Find ("DeskList").gameObject.SetActive (true);
+		//var listEl = deskDocContainer.transform.GetChild(0).transform.Find (ListElName).gameObject;
+		//GameObject.Destroy (listEl.transform.parent.gameObject);
+		//uiHolder.transform.Find ("DeskList").gameObject.SetActive (false);
 	}
 
 	//This is NOT used (?)

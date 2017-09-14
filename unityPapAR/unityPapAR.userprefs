@@ -5,22 +5,47 @@
       <File FileName="Assets\Scripts\ModelPopsup.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\hidePage.cs" Line="1" Column="1" />
       <File FileName="Assets\Vuforia\Scripts\Internal\clickbehaviour.cs" Line="1" Column="1" />
-      <File FileName="Assets\floatingPage.cs" Line="128" Column="9" />
+      <File FileName="Assets\floatingPage.cs" Line="163" Column="27" />
       <File FileName="Assets\Vuforia\Scripts\DefaultTrackableEventHandler.cs" Line="1" Column="1" />
       <File FileName="Assets\dispButtonType.cs" Line="1" Column="1" />
       <File FileName="Assets\placeOnDesk.cs" Line="1" Column="1" />
       <File FileName="Assets\LeanTouch\Scripts\LeanTouch.cs" Line="1" Column="1" />
       <File FileName="Assets\LeanTouch\Scripts\LeanFinger.cs" Line="1" Column="1" />
-      <File FileName="Assets\readFiles.cs" Line="1" Column="1" />
+      <File FileName="Assets\readFiles.cs" Line="50" Column="53" />
       <File FileName="Assets\LeanTouch\Scripts\LeanGesture.cs" Line="1" Column="1" />
       <File FileName="Assets\Vuforia\Scripts\Internal\reaction.cs" Line="1" Column="1" />
       <File FileName="Assets\LeanTouch\Examples\Scripts\LeanScale.cs" Line="1" Column="1" />
       <File FileName="Assets\LeanTouch\Examples\Scripts\LeanTouchEvents.cs" Line="1" Column="1" />
-      <File FileName="Assets\uiAction.cs" Line="1" Column="1" />
+      <File FileName="Assets\uiAction.cs" Line="28" Column="45" />
       <File FileName="Assets\findDoc.cs" Line="1" Column="1" />
-      <File FileName="Assets\docPointer.cs" Line="1" Column="1" />
-      <File FileName="Assets\findTarget.cs" Line="1" Column="1" />
+      <File FileName="Assets\docPointer.cs" Line="38" Column="74" />
+      <File FileName="Assets\findTarget.cs" Line="47" Column="3" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="unityPapAR" expanded="True">
+            <Node name="Assembly-CSharp" expanded="True">
+              <Node name="Scripts" expanded="True" />
+              <Node name="Vuforia" expanded="True">
+                <Node name="Scripts" expanded="True">
+                  <Node name="Internal" expanded="True" />
+                </Node>
+              </Node>
+              <Node name="floatingPage.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+      <Pad Id="MonoDevelop.NUnit.TestPad">
+        <State name="__root__">
+          <Node name="unityPapAR" expanded="True" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
