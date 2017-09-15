@@ -40,8 +40,8 @@ MonoBehaviour:
     y: 0
     width: 364
     height: 340
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 204, y: 221}
+  m_MaxSize: {x: 4004, y: 4021}
   m_ActualView: {fileID: 15}
   m_Panes:
   - {fileID: 15}
@@ -93,10 +93,10 @@ MonoBehaviour:
     y: 0
     width: 364
     height: 645
-  m_MinSize: {x: 200, y: 321}
-  m_MaxSize: {x: 4004, y: 8021}
+  m_MinSize: {x: 204, y: 342}
+  m_MaxSize: {x: 4004, y: 8042}
   vertical: 1
-  controlID: 117
+  controlID: 35
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -118,10 +118,10 @@ MonoBehaviour:
     y: 30
     width: 1366
     height: 645
-  m_MinSize: {x: 679, y: 442}
+  m_MinSize: {x: 683, y: 442}
   m_MaxSize: {x: 12008, y: 8042}
   vertical: 0
-  controlID: 21
+  controlID: 9
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -259,7 +259,7 @@ MonoBehaviour:
   m_MinSize: {x: 202, y: 442}
   m_MaxSize: {x: 4002, y: 8042}
   vertical: 1
-  controlID: 22
+  controlID: 10
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -322,19 +322,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/Resources
+    - Assets/LeanTouch/Examples/Scripts
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Resources
+  - Assets/LeanTouch/Examples/Scripts
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\Public\Documents\Studium\Master\implementierung\GitRepo\PapAR\unityPapAR
   m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: f8260000
-    m_LastClickedID: 9976
-    m_ExpandedIDs: 00000000002600003a260000c0260000e2260000ee260000f8260000fe260000a2270000a8270000b2270000242800003a2800007c280000a6280000aa280000d0280000dc28000000ca9a3bffffff7f
+    scrollPos: {x: 0, y: 120}
+    m_SelectedIDs: 6a260000
+    m_LastClickedID: 9834
+    m_ExpandedIDs: 00000000002600003a26000080260000c0260000e2260000ee260000f8260000fe260000a2270000a8270000b2270000282800003e28000080280000aa280000ae280000d4280000e0280000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -362,7 +362,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000002600003a260000c0260000e2260000ee260000f8260000fe260000a2270000a8270000b2270000242800003a2800007c280000a6280000aa280000d0280000dc280000
+    m_ExpandedIDs: 00000000002600003a26000080260000c0260000e2260000ee260000f8260000fe260000a2270000a8270000b2270000282800003e28000080280000aa280000ae280000d4280000e0280000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -387,8 +387,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: c42a0000
-    m_LastClickedInstanceID: 10948
+    m_SelectedInstanceIDs: b27a0000
+    m_LastClickedInstanceID: 31410
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c6230000302600002a300000e62c0000500100008085fdffd27900004235ffffbe2800000674ffffce28000000000000
     m_RenameOverlay:
@@ -414,7 +414,7 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
     m_NewAssetIndexInList: -1
-    m_ScrollPosition: {x: 0, y: 398.5}
+    m_ScrollPosition: {x: 0, y: 1541}
     m_GridSize: 64
   m_DirectoriesAreaWidth: 140
 --- !u!114 &14
@@ -478,9 +478,9 @@ MonoBehaviour:
     height: 319
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: c42a0000
-    m_LastClickedID: 10948
-    m_ExpandedIDs: 24a1ffff6aa1ffff74a1ffff56bdffff60bdffff8af2ffff94f2ffffe4fbffff000000007a2a0000022b0000ca2c0000c42d00007c2e0000
+    m_SelectedIDs: 
+    m_LastClickedID: 0
+    m_ExpandedIDs: 909bffff0e9cffff309dffff6e9fffffec9fffff0ea1ffffecc7ffff6ac8ffff8cc9ffffd0cbffff4cccffff6ecdffffe4fbffff000000008e2a0000fe680000b4690000666e0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -530,14 +530,14 @@ MonoBehaviour:
     width: 581
     height: 299
   m_SceneLighting: 1
-  lastFramingTime: 1120.1246493386357
+  lastFramingTime: 4793.977339438367
   m_2DMode: 0
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 0, y: 0.05398956, z: 0.205992}
+    m_Target: {x: 0, y: 0.0000039997976, z: -0.0000000037252903}
     speed: 2
-    m_Value: {x: 0, y: 0.05398956, z: 0.205992}
+    m_Value: {x: 0, y: 0.0000039997976, z: -0.0000000037252903}
   m_RenderMode: 0
   m_ValidateTrueMetals: 0
   m_SceneViewState:
@@ -564,9 +564,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 0.34911066
+    m_Target: 0.18012077
     speed: 2
-    m_Value: 0.34911066
+    m_Value: 0.18012077
   m_Ortho:
     m_Target: 0
     speed: 2

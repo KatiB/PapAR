@@ -18,6 +18,7 @@ public class floatingPage : MonoBehaviour {
 	public Camera arCam;
 	public GameObject centerHighlight;
 	public GameObject centredDoc;
+	public GameObject movedPage;
 	public GameObject lableUI;
 
 	//Scripts:
@@ -73,6 +74,42 @@ public class floatingPage : MonoBehaviour {
 				}
 
 				handleClick (ray, hit); //http://answers.unity3d.com/questions/332085/how-do-you-make-an-object-respond-to-a-click-in-c.html
+			}
+			if (!LeanTouch.Fingers [i].StartedOverGui && LeanTouch.Fingers [i].Age > 1f) {
+				Debug.Log ("LeanDown!");
+				Ray rayIII = arCam.ScreenPointToRay (LeanTouch.Fingers[i].ScreenPosition);
+				if (Physics.Raycast (rayIII, out hit) && hit.transform.name.Contains ("Front")) {
+					Debug.Log ("HIT THE FRONT!");
+					if (movedPage == null) {
+						movedPage = hit.transform.parent.gameObject;
+						if (threeD) {
+							movedPage.AddComponent<LeanTranslate> ();
+						}
+					}
+
+				}
+				if (movedPage != null && !threeD) {
+					Debug.Log ("No3");
+					var ImagTarget = GameObject.Find ("ImageTarget");
+					Plane targetPlane = new Plane (ImagTarget.transform.up, ImagTarget.transform.position);
+					Ray rayX = arCam.ScreenPointToRay (LeanTouch.Fingers [i].ScreenPosition);
+					float dist = 0.0f;
+					targetPlane.Raycast (rayX, out dist);
+					var movePos = rayX.GetPoint (dist);
+					//Ray rayX2 = arCam.ScreenPointToRay (LeanTouch.Fingers [i].LastScreenPosition);
+					//targetPlane.Raycast (rayX2, out dist);
+					//var oldPos = rayX2.GetPoint (dist);
+					//movedPage.transform.Translate(movePos-oldPos);
+					Debug.Log ("MOVE!!!" + movePos);
+					movedPage.transform.localPosition = movePos;
+				}
+
+			}
+			if (LeanTouch.Fingers [i].Up && movedPage != null) {
+				if (threeD) {
+					Destroy (movedPage.GetComponent<LeanTranslate> ());
+				}
+				movedPage = null;
 			}
 			/**if (LeanTouch.Fingers [i].Swipe) {
 				var floatPage = GameObject.Find ("floatingImg");
