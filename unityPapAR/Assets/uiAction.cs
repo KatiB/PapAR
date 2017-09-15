@@ -14,7 +14,7 @@ public class uiAction : MonoBehaviour {
 	public GameObject searchHeader;
 	public GameObject trackingLostIndicator;
 	public GameObject pointer;
-	public UnityEngine.UI.Text dispText2;
+	public Text dispText2;
 
 	public GameObject imgTargt;
 

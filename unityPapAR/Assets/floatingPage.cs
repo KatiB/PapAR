@@ -11,13 +11,14 @@ public class floatingPage : MonoBehaviour {
 	//UI Elements:
 	public GameObject menU;
 	public uiAction menuControl;
-	public UnityEngine.UI.Text dispText2;
+	public Text dispText2;
 	public Slider slide;
 
 	//Game Elements:
 	public Camera arCam;
 	public GameObject centerHighlight;
 	public GameObject centredDoc;
+	public GameObject lableUI;
 
 	//Scripts:
 
@@ -38,6 +39,7 @@ public class floatingPage : MonoBehaviour {
 	void Start () {
 		menU = GameObject.Find ("MenuUICanvas");
 		menuControl = menU.GetComponent<uiAction> ();
+		lableUI = menU.transform.Find ("LablePanel").gameObject;
 		arCam = Camera.allCameras [0];
 
 	}
@@ -122,7 +124,7 @@ public class floatingPage : MonoBehaviour {
 		}**/
 		if (!Physics.Raycast (rayII, out hitII) || hitII.collider.gameObject != centredDoc) {
 			removeHighlight ();
-			if (hitII.collider.name.Contains ("Front")) {
+			if (hitII.collider != null && hitII.collider.name.Contains ("Front")) {
 				centredDoc = hitII.collider.gameObject;
 				highlightDoc (centredDoc);
 			}
@@ -162,7 +164,6 @@ public class floatingPage : MonoBehaviour {
 				menuControl.removeTakenDocFromList (hit.collider.gameObject.name);
 				menuControl.closeMenu ();
 				removeHighlight ();
-				centredDoc = null;
 				DestroyObject (clickTarget.transform.parent.gameObject);
 			} else if (clickTarget.name == "floatingImg") {
 				GameObject newPage = createSelectedPage (clickTarget);
@@ -178,7 +179,7 @@ public class floatingPage : MonoBehaviour {
 				DestroyObject (GameObject.Find("floatingImg"));
 			}
 
-			addInfo (clickObject);
+			//addInfo (clickTarget);
 		}
 	}
 
@@ -186,23 +187,29 @@ public class floatingPage : MonoBehaviour {
 		GameObject highlightFrame = Resources.Load ("highlightPlane") as GameObject;
 		centerHighlight = GameObject.Instantiate (highlightFrame, focussedPage.transform.parent.transform);
 		centerHighlight.name = "centerHighlight";
+		addInfo (focussedPage);
 	}
 
 	public void removeHighlight() {
+		centredDoc = null;
 		if (centerHighlight != null) {
 			Debug.Log ("DESTROY");
 			GameObject.Destroy (centerHighlight);
 		}
+		lableUI.SetActive (false);
 	}
 
-	public void addInfo(string clckPage){
-		Debug.Log ("Display Infos...");
+	public void addInfo(GameObject clckdPage){
+		Debug.Log ("Display Infos..." + clckdPage.GetComponent<Renderer> ().material.mainTexture.name);
+		lableUI.SetActive (true);
+		lableUI.transform.GetChild (0).GetComponent<Text> ().text = clckdPage.GetComponent<Renderer> ().material.mainTexture.name;
 		/**
-		GameObject clickedPage =  GameObject.Find (clckPage);
-		GameObject lable = GameObject.CreatePrimitive(PrimitiveType.Plane);
-		lable.transform.parent = clickedPage.transform;
-		lable.transform.localEulerAngles = new Vector3 (90.0f, 0.0f, 180.0f);
-		lable.transform.localPosition = new Vector3 (0.05f, 0f, 0f);
+		lable = GameObject.CreatePrimitive(PrimitiveType.Plane);
+		lable.transform.parent = clckdPage.transform;
+		lable.transform.localEulerAngles = new Vector3 (0.0f, 90.0f, 0.0f);
+		lable.transform.localPosition = (new Vector3 (0f, 0f, -6f));
+		//lable.transform.Translate (new Vector3 (0f, 0f, -6f));
+		lable.transform.localScale = new Vector3 (clckdPage.transform.localScale.x, 50.0f, 1f);
 		dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
 		dispText2.text = "Lable: " + lable.transform.parent.name;
 		**/
@@ -219,6 +226,7 @@ public class floatingPage : MonoBehaviour {
 		menuControl.searchHeader.SetActive (false);
 		GameObject.Destroy (GameObject.Find ("PointerCube(Clone)"));
 		holdingPage = true;
+		removeHighlight ();
 		dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
 		//GameObject floatingImgBtn = gameObject.transform.Find ("activePageButton").gameObject;
 		//GameObject floatingImg = floatingImgBtn.transform.Find ("ActiveImagePanel").gameObject;
@@ -401,11 +409,13 @@ public class floatingPage : MonoBehaviour {
 	//if page is dropped via delete button
 	public void setHoldingState(){
 		holdingPage = false;
+		removeHighlight ();
 	}
 
 	//toggle if the document in the centre of the screen gets highlighted
 	public void setHighlitingStile() {
 		highlight = !highlight;
+		removeHighlight ();
 	}
 
 	//Toggle if the document is placed on the desk or in Midair
