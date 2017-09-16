@@ -18,6 +18,7 @@ public class floatingPage : MonoBehaviour {
 	public Camera arCam;
 	public GameObject centerHighlight;
 	public GameObject centredDoc;
+	public GameObject pickUpPage;
 	public GameObject movedPage;
 	public GameObject lableUI;
 
@@ -35,6 +36,7 @@ public class floatingPage : MonoBehaviour {
 	public bool hapticf = true;
 	public bool highlight = true;
 	public bool holdingPage = false;
+	public bool gaveFeedback = false;
 
 	// Use this for initialization
 	void Start () {
@@ -75,8 +77,12 @@ public class floatingPage : MonoBehaviour {
 
 				handleClick (ray, hit); //http://answers.unity3d.com/questions/332085/how-do-you-make-an-object-respond-to-a-click-in-c.html
 			}
-			if (!LeanTouch.Fingers [i].StartedOverGui && LeanTouch.Fingers [i].Age > 1f) {
+			if (!LeanTouch.Fingers [i].StartedOverGui && LeanTouch.Fingers [i].Age > 0.3f) {
 				Debug.Log ("LeanDown!");
+				if (hapticf && !gaveFeedback && !holdingPage) {
+					Handheld.Vibrate ();
+					gaveFeedback = true;
+				}
 				Ray rayIII = arCam.ScreenPointToRay (LeanTouch.Fingers[i].ScreenPosition);
 				if (Physics.Raycast (rayIII, out hit) && hit.transform.name.Contains ("Front")) {
 					Debug.Log ("HIT THE FRONT!");
@@ -110,6 +116,7 @@ public class floatingPage : MonoBehaviour {
 					Destroy (movedPage.GetComponent<LeanTranslate> ());
 				}
 				movedPage = null;
+				gaveFeedback = false;
 			}
 			/**if (LeanTouch.Fingers [i].Swipe) {
 				var floatPage = GameObject.Find ("floatingImg");
@@ -185,13 +192,16 @@ public class floatingPage : MonoBehaviour {
 				Debug.Log ("Komme ich hier her?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!");
 				return;
 			}
-			if (clickTarget.transform.parent.name == "ImageTarget") {
-				var texName = hit.collider.gameObject.transform.GetChild(0).GetComponentInChildren<Renderer> ().material.mainTexture.name;
+			if (clickTarget.transform.parent.name == "ImageTarget" && !holdingPage) {
+				var texName = hit.collider.gameObject.transform.GetChild (0).GetComponentInChildren<Renderer> ().material.mainTexture.name;
 				Debug.Log ("Bis hier her!!!");
 				takePage (texName);
-				menuControl.removeTakenDocFromList (hit.collider.gameObject.transform.GetChild(0).name);
+				//menuControl.setFlyBack (hit.collider.transform.position);
+				menuControl.removeTakenDocFromList (hit.collider.gameObject.transform.GetChild (0).name);
 				menuControl.closeMenu ();
-				DestroyObject (clickTarget);
+				pickUpPage = hit.collider.gameObject;
+				pickUpPage.SetActive (false);
+				//DestroyObject (clickTarget);
 			} else if (clickTarget.transform.parent.transform.parent.name == "ImageTarget" && !holdingPage) {
 				//var scriptHolderObject = GameObject.FindObjectOfType (typeof(floatingPage)) as floatingPage; //https://forum.unity3d.com/threads/calling-function-from-other-scripts-c.57072/
 				//scriptHolderObject.takePage (texName);
@@ -200,23 +210,37 @@ public class floatingPage : MonoBehaviour {
 				takePage (texName);
 				menuControl.removeTakenDocFromList (hit.collider.gameObject.name);
 				menuControl.closeMenu ();
+				pickUpPage = hit.collider.transform.parent.gameObject;
+				pickUpPage.SetActive (false);
 				removeHighlight ();
-				DestroyObject (clickTarget.transform.parent.gameObject);
+				//DestroyObject (clickTarget.transform.parent.gameObject);
 			} else if (clickTarget.name == "floatingImg") {
-				GameObject newPage = createSelectedPage (clickTarget);
-				menuControl.addPlacedDocToList (newPage);
-				/**
+				placePage (clickTarget);
+			} else if (clickTarget.transform.parent.name == "floatingImg") {
+				placePage (clickTarget.transform.parent.gameObject);
+			}
+
+			//addInfo (clickTarget);
+		}
+	}
+
+	public void placePage (GameObject page){
+		GameObject newPage = createSelectedPage (page);
+		menuControl.addPlacedDocToList (newPage);
+		/**
 				if (soundf){
 					AudioSource audio = gameObject.GetComponent<AudioSource>();
 					audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/paperrustle"));	//!!Quelle
 				}**/
-				menuControl.hideDocDetails();
-				menuControl.menuButton.SetActive (true);
-				holdingPage = false;
-				DestroyObject (GameObject.Find("floatingImg"));
-			}
-
-			//addInfo (clickTarget);
+		menuControl.hideDocDetails();
+		menuControl.menuButton.SetActive (true);
+		holdingPage = false;
+		DestroyObject (GameObject.Find("floatingImg"));
+		if (pickUpPage != null) {
+			Debug.Log ("Destroer? " + pickUpPage);
+			DestroyObject (pickUpPage);
+			pickUpPage = null;
+			Debug.Log ("Destroer? " + pickUpPage);
 		}
 	}
 
@@ -338,7 +362,7 @@ public class floatingPage : MonoBehaviour {
 		floatingImagePlaneBackground.transform.parent = floatingImagePlane.transform;
 		//floatingImagePlaneBackground.transform.parent = Camera.allCameras[0].transform;
 		floatingImagePlaneBackground.transform.localEulerAngles = new Vector3 (0f, 0f, 0f);
-		floatingImagePlaneBackground.transform.localPosition = new Vector3 (0.0f, -0.20001f, 0.0f);
+		floatingImagePlaneBackground.transform.localPosition = new Vector3 (0.0f, -0.0001f, 0.0f);
 
 		//floatingImagePlaneBackground.transform.localEulerAngles = Camera.allCameras[0].transform.eulerAngles;
 		//floatingImagePlaneBackground.transform.localEulerAngles = new Vector3 (90f, 0f, 180f);
@@ -432,8 +456,16 @@ public class floatingPage : MonoBehaviour {
 
 	}
 
+	public void rePlacePage(){
+		GameObject.Destroy (GameObject.Find ("floatingImg"));
+		pickUpPage.SetActive (true);
+		pickUpPage = null;
+	}
+
 	public void dropOldPage (){
 		GameObject.Destroy (GameObject.Find ("floatingImg"));
+		DestroyObject (pickUpPage);
+		pickUpPage = null;
 	}
 
 	public void recenterPage (){

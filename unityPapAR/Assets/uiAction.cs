@@ -8,13 +8,17 @@ public class uiAction : MonoBehaviour {
 	//UI Elements
 	public GameObject uiHolder;
 	public GameObject mainMen;
-	public GameObject menuButton;
+	public GameObject menuButton; 
 	public GameObject docDetail;
 	public GameObject deskDocContainer;
 	public GameObject searchHeader;
 	public GameObject trackingLostIndicator;
 	public GameObject pointer;
 	public Text dispText2;
+	public Button flBckBtn;
+	public GameObject docMenu;
+	public GameObject docSmalMenu;
+	public GameObject docDetailMenu;
 
 	public GameObject imgTargt;
 
@@ -28,7 +32,6 @@ public class uiAction : MonoBehaviour {
 		searchHeader = uiHolder.transform.Find ("SearchDocHeaderPanel").gameObject;
 		trackingLostIndicator = uiHolder.transform.Find ("WarningPanel").gameObject;
 		//pointer = uiHolder.transform.Find ("PointerCube").gameObject;
-
 		imgTargt = GameObject.Find ("ImageTarget");
 	}
 	
@@ -78,7 +81,15 @@ public class uiAction : MonoBehaviour {
 		docDetail.SetActive (true);
 	}
 
+
 	public void hideDocDetails(){
+		if (docMenu != null && docSmalMenu != null) {
+			docMenu.SetActive (false);
+			docSmalMenu.SetActive (true);
+		}
+		if (docDetailMenu != null) {
+			docDetailMenu.SetActive (false);
+		}
 		docDetail.SetActive (false);
 	}
 
@@ -155,6 +166,16 @@ public class uiAction : MonoBehaviour {
 		pointer.AddComponent<docPointer> ();
 		//var point = pointer.GetComponent<docPointer> ();
 		//point.pointToDoc ();
+	}
+
+	public void setFlyBack (){
+		Debug.Log ("Destiny! ");
+		flBckBtn = GameObject.Find("flyBackButton").GetComponent<UnityEngine.UI.Button>();
+		if (uiHolder.GetComponent<floatingPage> ().pickUpPage != null) {
+			flBckBtn.interactable = true;
+		} else {
+			flBckBtn.interactable = false;
+		}
 	}
 
 	public void cleanUp (){
