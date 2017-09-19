@@ -21,6 +21,7 @@ public class floatingPage : MonoBehaviour {
 	public GameObject pickUpPage;
 	public GameObject movedPage;
 	public GameObject lableUI;
+	public GameObject imgTargt;
 
 	//Scripts:
 
@@ -74,13 +75,14 @@ public class floatingPage : MonoBehaviour {
 					dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
 					dispText2.text = "Clicked " + clickTarget + ", " + clickObject;
 				}
-
-				handleClick (ray, hit); //http://answers.unity3d.com/questions/332085/how-do-you-make-an-object-respond-to-a-click-in-c.html
+				if (menuControl.trackingActive){
+					handleClick (ray, hit); //http://answers.unity3d.com/questions/332085/how-do-you-make-an-object-respond-to-a-click-in-c.html
+				}
 			}
-			if (!LeanTouch.Fingers [i].StartedOverGui && LeanTouch.Fingers [i].Age > 0.3f) {
+			if (!LeanTouch.Fingers [i].StartedOverGui && !holdingPage) {	//&& LeanTouch.Fingers [i].Age > 0.3f  
 				Debug.Log ("LeanDown!");
-				if (hapticf && !gaveFeedback && !holdingPage) {
-					Handheld.Vibrate ();
+				if (hapticf && !gaveFeedback) {
+					//Handheld.Vibrate ();
 					gaveFeedback = true;
 				}
 				Ray rayIII = arCam.ScreenPointToRay (LeanTouch.Fingers[i].ScreenPosition);
@@ -88,25 +90,33 @@ public class floatingPage : MonoBehaviour {
 					Debug.Log ("HIT THE FRONT!");
 					if (movedPage == null) {
 						movedPage = hit.transform.parent.gameObject;
+						/**
 						if (threeD) {
 							movedPage.AddComponent<LeanTranslate> ();
 						}
+						**/
 					}
 
+
 				}
-				if (movedPage != null && !threeD) {
-					Debug.Log ("No3");
-					var ImagTarget = GameObject.Find ("ImageTarget");
-					Plane targetPlane = new Plane (ImagTarget.transform.up, ImagTarget.transform.position);
+				if (movedPage != null && threeD) {
+					Plane targetPlane = new Plane (movedPage.transform.forward, movedPage.transform.position);  // + new Vector3 (0.0f, 0.0f, -0.21f));
 					Ray rayX = arCam.ScreenPointToRay (LeanTouch.Fingers [i].ScreenPosition);
 					float dist = 0.0f;
 					targetPlane.Raycast (rayX, out dist);
 					var movePos = rayX.GetPoint (dist);
-					//Ray rayX2 = arCam.ScreenPointToRay (LeanTouch.Fingers [i].LastScreenPosition);
-					//targetPlane.Raycast (rayX2, out dist);
-					//var oldPos = rayX2.GetPoint (dist);
-					//movedPage.transform.Translate(movePos-oldPos);
 					Debug.Log ("MOVE!!!" + movePos);
+					movedPage.transform.localPosition = movePos;
+					//movedPage.transform.Translate (movePos - movedPage.transform.position);
+				}
+
+				if (movedPage != null && !threeD) {
+					//var ImagTarget = GameObject.Find ("ImageTarget");
+					Plane targetPlane = new Plane (imgTargt.transform.up, imgTargt.transform.position);
+					Ray rayX = arCam.ScreenPointToRay (LeanTouch.Fingers [i].ScreenPosition);
+					float dist = 0.0f;
+					targetPlane.Raycast (rayX, out dist);
+					var movePos = rayX.GetPoint (dist);
 					movedPage.transform.localPosition = movePos;
 				}
 
@@ -226,6 +236,7 @@ public class floatingPage : MonoBehaviour {
 
 	public void placePage (GameObject page){
 		GameObject newPage = createSelectedPage (page);
+		checkOverlaping (newPage.transform.parent.gameObject);
 		menuControl.addPlacedDocToList (newPage);
 		/**
 				if (soundf){
@@ -241,6 +252,24 @@ public class floatingPage : MonoBehaviour {
 			DestroyObject (pickUpPage);
 			pickUpPage = null;
 			Debug.Log ("Destroer? " + pickUpPage);
+		}
+	}
+	//move overlapping documents aside
+	public void checkOverlaping (GameObject newPage){
+		var b = newPage.GetComponent<Renderer> ().bounds;
+		foreach (Transform child in imgTargt.transform) {
+			Debug.Log ("CHeck this B! " + b.max);
+			Debug.Log ("CHeck this " + child.gameObject + " child! " + child.GetComponent<Renderer> ().bounds);
+			Debug.Log ("CHeck this! " + b.Intersects (child.GetComponent<Renderer> ().bounds));
+			var chiB = child.GetComponent<Renderer> ().bounds;
+			if (newPage.name != child.name && b.Intersects (chiB)){
+				//child.transform.Translate (b.size.x / 2, b.size.y / 2, 0f);
+				if (b.center.x < chiB.center.x) {
+					child.transform.Translate (b.max.x - chiB.min.x, 0f, 0f);
+				} else {
+					child.transform.Translate (b.min.x - chiB.max.x, 0f, 0f);
+				}
+			}
 		}
 	}
 
@@ -261,7 +290,6 @@ public class floatingPage : MonoBehaviour {
 	}
 
 	public void addInfo(GameObject clckdPage){
-		Debug.Log ("Display Infos..." + clckdPage.GetComponent<Renderer> ().material.mainTexture.name);
 		lableUI.SetActive (true);
 		lableUI.transform.GetChild (0).GetComponent<Text> ().text = clckdPage.GetComponent<Renderer> ().material.mainTexture.name;
 		/**
@@ -285,7 +313,7 @@ public class floatingPage : MonoBehaviour {
 		menuControl.mainMen.SetActive (false);
 		menuControl.menuButton.SetActive (false);
 		menuControl.searchHeader.SetActive (false);
-		GameObject.Destroy (GameObject.Find ("PointerCube(Clone)"));
+		GameObject.Destroy (GameObject.Find ("PointerSphere(Clone)"));
 		holdingPage = true;
 		removeHighlight ();
 		dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
@@ -458,7 +486,11 @@ public class floatingPage : MonoBehaviour {
 
 	public void rePlacePage(){
 		GameObject.Destroy (GameObject.Find ("floatingImg"));
+		menuControl.addPlacedDocToList (pickUpPage.transform.GetChild(0).gameObject);
 		pickUpPage.SetActive (true);
+		if (hapticf && !gaveFeedback) {
+			Handheld.Vibrate ();
+		}
 		pickUpPage = null;
 	}
 

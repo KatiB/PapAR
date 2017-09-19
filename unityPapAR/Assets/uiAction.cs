@@ -15,12 +15,17 @@ public class uiAction : MonoBehaviour {
 	public GameObject trackingLostIndicator;
 	public GameObject pointer;
 	public Text dispText2;
+	public Button docListMenu;
+	public Button deskListMenu;
 	public Button flBckBtn;
 	public GameObject docMenu;
 	public GameObject docSmalMenu;
 	public GameObject docDetailMenu;
 
 	public GameObject imgTargt;
+
+	//Variables
+	public bool trackingActive = false;
 
 	// Use this for initialization
 	void Start () {
@@ -73,6 +78,9 @@ public class uiAction : MonoBehaviour {
 			trackingLostIndicator = GameObject.Find ("WarningPanel");
 		}**/
 		trackingLostIndicator.SetActive (visibilityState);
+		docListMenu.interactable = !visibilityState;
+		deskListMenu.interactable = !visibilityState;
+		trackingActive = !visibilityState;
 
 	}
 
@@ -181,6 +189,11 @@ public class uiAction : MonoBehaviour {
 	public void cleanUp (){
 		foreach (Transform child in imgTargt.transform) {
 			GameObject.Destroy (child.gameObject);
+		}
+		foreach (Transform menuChild in deskDocContainer.transform) {
+			if (menuChild.name != "DeskContent") {
+				GameObject.Destroy (menuChild.gameObject);
+			}
 		}
 	}
 }

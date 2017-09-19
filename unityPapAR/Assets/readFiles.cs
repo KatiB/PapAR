@@ -9,13 +9,16 @@ public class readFiles : MonoBehaviour {
 	public GameObject menU;
 	public uiAction menuControl;
 	public floatingPage pageControl;
+	public GameObject docListContainer;
+	public GameObject listElPre;
 
 	// Use this for initialization
 	void Start () {
 		menU = GameObject.Find ("MenuUICanvas");
 		menuControl = menU.GetComponent<uiAction> ();
 		pageControl = menU.GetComponent<floatingPage> ();
-		//displayTextures ();
+		docListContainer = menU.transform.Find ("DocList").gameObject.transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).gameObject;
+		displayTextures ();
 
 	}
 	
@@ -29,19 +32,19 @@ public class readFiles : MonoBehaviour {
 		var textures = Resources.LoadAll("Documents", typeof(Sprite));
 		//GameObject docContainer = GameObject.Find ("DocListButtons");
 
-		GameObject docContainer = GameObject.Find ("DocumentListContent");
+		//docListContainer = GameObject.Find ("DocumentListContent");
 		Debug.Log ("HELLO?!?!" + textures.Length);
-		Debug.Log ("COUNT! " + docContainer.transform.childCount);
-		if (docContainer.transform.childCount < 2 ){
+		Debug.Log ("COUNT! " + docListContainer.transform.childCount);
+		if (docListContainer.transform.childCount < 2 ){
 			foreach (Sprite tex in textures) {
 				//Debug.Log (tex.name);
 				//Sprite docTex = Resources.Load (tex.name) as Sprite;
 				//var pagePanel = GUIElement.Instantiate (GameObject.Find ("PagePreviewPanel"), docContainer.transform);
 				//pagePanel.GetComponent<Image> ().sprite = tex;
 				//pagePanel.name = tex.name;
-
+				
 				//var btn = GUIElement.Instantiate (GameObject.Find ("PageButton"), docContainer.transform);
-				var doc = GUIElement.Instantiate (GameObject.Find ("DocumentPanel"), docContainer.transform);
+				var doc = GUIElement.Instantiate (listElPre, docListContainer.transform);
 				var btn = doc.transform.GetChild (0);
 				btn.GetComponent<Image> ().sprite = tex;
 				btn.name = tex.name;
@@ -57,7 +60,8 @@ public class readFiles : MonoBehaviour {
 
 			}
 			//GameObject.Destroy (GameObject.Find ("PageButton"));
-			GameObject.Destroy (GameObject.Find ("DocumentPanel"));
+			//GameObject.Destroy (GameObject.Find ("DocumentPanel"));
+			GameObject.Destroy (listElPre);
 		}
 	}
 
