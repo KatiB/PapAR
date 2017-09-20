@@ -122,9 +122,12 @@ public class floatingPage : MonoBehaviour {
 
 			}
 			if (LeanTouch.Fingers [i].Up && movedPage != null) {
+				/**
 				if (threeD) {
 					Destroy (movedPage.GetComponent<LeanTranslate> ());
 				}
+				**/
+				checkOverlaping (movedPage);
 				movedPage = null;
 				gaveFeedback = false;
 			}
@@ -336,7 +339,7 @@ public class floatingPage : MonoBehaviour {
 		//var height = 2.0f * Mathf.Tan(0.5f * Camera.allCameras[0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
 		//var width = height * Screen.width / Screen.height;
 
-		var height = 2.0f * Mathf.Tan (0.5f * arCam.fieldOfView * Mathf.Deg2Rad) + 0.4f;
+		var height = 2.0f * Mathf.Tan (0.5f * arCam.fieldOfView * Mathf.Deg2Rad);
 		var width = height * Screen.width / Screen.height;
 
 		if (Screen.width < Screen.height) {
@@ -362,7 +365,7 @@ public class floatingPage : MonoBehaviour {
 		//floatingImagePlane.transform.localEulerAngles = Camera.allCameras[0].transform.eulerAngles;
 		floatingImagePlane.transform.localEulerAngles = new Vector3 (90f, 0f, 180f);
 		//floatingImagePlane.transform.Translate (0.0f, -0.2f, 0.0f);
-		floatingImagePlane.transform.localPosition = new Vector3 (0, 0, 0.2f);
+		floatingImagePlane.transform.localPosition = new Vector3 (0, 0, 0.1f);
 		//floatingImagePlane.transform.SetPositionAndRotation (floatingImagePlane.transform.parent.position, floatingImagePlane.transform.parent.localRotation);
 
 
@@ -425,12 +428,12 @@ public class floatingPage : MonoBehaviour {
 		imagePlane.GetComponent<Renderer> ().material = mat;
 		//Texture demotex = Resources.Load (currentTextureName) as Texture;
 		//Texture demotex = Resources.Load (selectedPage.GetComponent<Renderer> ().material.mainTexture.name) as Texture;
-		var height = 2.0f * Mathf.Tan(0.5f * Camera.allCameras[0].fieldOfView * Mathf.Deg2Rad) + 0.4f;
+		var height = 2.0f * Mathf.Tan(0.5f * Camera.allCameras[0].fieldOfView * Mathf.Deg2Rad);
 		var width = height * Screen.width / Screen.height;
 		Vector3 pagePos = new Vector3 (arCam.transform.position.x, arCam.transform.position.y, arCam.transform.position.z);
 		Vector3 pageAngle = arCam.transform.eulerAngles;
 		Vector3 coverAngle = new Vector3 (90.0f, 0.0f, 180.0f);
-		Vector3 pageDist = new Vector3 (0.0f, 0.0f, 0.21f);
+		Vector3 pageDist = new Vector3 (0.0f, 0.0f, 0.1f);
 		float camRotY = arCam.transform.eulerAngles.y;
 
 		if (!threeD) {
@@ -502,7 +505,7 @@ public class floatingPage : MonoBehaviour {
 
 	public void recenterPage (){
 		var handHeldPage = GameObject.Find ("floatingImg");
-		handHeldPage.transform.localPosition = new Vector3 (0, 0, 0.2f);
+		handHeldPage.transform.localPosition = new Vector3 (0, 0, 0.1f);
 		handHeldPage.transform.localScale = new Vector3(pageWidth/100f, 1.0f, pageHight/100f );
 		handHeldPage.transform.localEulerAngles = new Vector3 (90f, 0f, 180f);
 	}

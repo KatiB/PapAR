@@ -11,10 +11,13 @@ public class uiAction : MonoBehaviour {
 	public GameObject menuButton; 
 	public GameObject docDetail;
 	public GameObject deskDocContainer;
+	public GameObject docContainer;
 	public GameObject searchHeader;
 	public GameObject trackingLostIndicator;
 	public GameObject pointer;
 	public Text dispText2;
+	public GameObject docHintText;
+	public GameObject deskHintText;
 	public Button docListMenu;
 	public Button deskListMenu;
 	public Button flBckBtn;
@@ -82,6 +85,22 @@ public class uiAction : MonoBehaviour {
 		deskListMenu.interactable = !visibilityState;
 		trackingActive = !visibilityState;
 
+	}
+
+	public void setDeskHint (){
+		if (deskDocContainer.transform.childCount == 0) {
+			deskHintText.SetActive (true);
+		} else {
+			deskHintText.SetActive (false);
+		}
+	}
+
+	public void setDocHint (){
+		if (docContainer.transform.childCount == 0) {
+			docHintText.SetActive (true);
+		} else {
+			docHintText.SetActive (false);
+		}
 	}
 
 	public void showDocDetails(string docName){
