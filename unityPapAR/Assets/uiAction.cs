@@ -24,6 +24,7 @@ public class uiAction : MonoBehaviour {
 	public GameObject docMenu;
 	public GameObject docSmalMenu;
 	public GameObject docDetailMenu;
+	public GameObject flyBackPanel;
 
 	public GameObject imgTargt;
 
@@ -81,7 +82,7 @@ public class uiAction : MonoBehaviour {
 			trackingLostIndicator = GameObject.Find ("WarningPanel");
 		}**/
 		trackingLostIndicator.SetActive (visibilityState);
-		docListMenu.interactable = !visibilityState;
+		//docListMenu.interactable = !visibilityState;
 		deskListMenu.interactable = !visibilityState;
 		trackingActive = !visibilityState;
 
@@ -200,8 +201,10 @@ public class uiAction : MonoBehaviour {
 		flBckBtn = GameObject.Find("flyBackButton").GetComponent<UnityEngine.UI.Button>();
 		if (uiHolder.GetComponent<floatingPage> ().pickUpPage != null) {
 			flBckBtn.interactable = true;
+			flyBackPanel.GetComponent<Image> ().color = new Color32(238, 235, 200, 255);
 		} else {
 			flBckBtn.interactable = false;
+			flyBackPanel.GetComponent<Image> ().color = new Color32(238, 235, 200, 100);
 		}
 	}
 
