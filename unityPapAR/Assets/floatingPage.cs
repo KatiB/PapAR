@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -13,6 +16,9 @@ public class floatingPage : MonoBehaviour {
 	public uiAction menuControl;
 	public Text dispText2;
 	public Slider slide;
+	public InputField logInput;
+
+	public GameObject continueButton;
 
 	//Game Elements:
 	public Camera arCam;
@@ -23,6 +29,8 @@ public class floatingPage : MonoBehaviour {
 	public GameObject lableUI;
 	public GameObject imgTargt;
 
+	public GameObject newlyCreatedPage;
+
 	//Scripts:
 
 	//Variables:
@@ -30,14 +38,30 @@ public class floatingPage : MonoBehaviour {
 	public int docCount = 0;
 	public float pageWidth = 1f;
 	public float pageHight = 1f;
-	public float pageSizefactor = 1f;
+	public float pageSizefactor = 4f;
 	public float pageVol = 0.008f;
-	public bool threeD = true;
+	public float stackHeight = 0f;
+	public bool threeD = false;
 	public bool soundf = true;
 	public bool hapticf = true;
 	public bool highlight = true;
 	public bool holdingPage = false;
 	public bool gaveFeedback = false;
+
+	public float minX;
+	public float maxX;
+	public float minZ;
+	public float maxZ;
+
+
+	//Save stuff
+	public BinaryFormatter bf;
+	public FileStream file;
+	public string logFileName = "defaultLog.txt";
+	public string  logdata = "\ntimestamp\ttimeSinceStart\taction\tpage\tposX\tposY\tposZ\n";
+
+	public DateTime starttime = System.DateTime.Now.ToUniversalTime ();
+	public int okCount = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -45,6 +69,13 @@ public class floatingPage : MonoBehaviour {
 		menuControl = menU.GetComponent<uiAction> ();
 		lableUI = menU.transform.Find ("LablePanel").gameObject;
 		arCam = Camera.allCameras [0];
+		logFileName = System.DateTime.Now.ToString ("dd_HH_mm_") + "defaultName.txt";
+		logdata = "\ntimestamp\ttimeSinceStart\taction\tpage\tposX\tposY\tposZ\tcameradistance\n";
+		minX = -1.5f;
+		maxX = 1.5f;
+		minZ = -1.2f;
+		maxZ = 1.2f;
+		//createStack ();
 
 	}
 
@@ -79,7 +110,7 @@ public class floatingPage : MonoBehaviour {
 					handleClick (ray, hit); //http://answers.unity3d.com/questions/332085/how-do-you-make-an-object-respond-to-a-click-in-c.html
 				}
 			}
-			if (!LeanTouch.Fingers [i].StartedOverGui && !holdingPage) {	//&& LeanTouch.Fingers [i].Age > 0.3f  
+			if (!LeanTouch.Fingers [i].StartedOverGui && !holdingPage && LeanTouch.Fingers [i].Age > 0.15f) {	//&&   
 				Debug.Log ("LeanDown!");
 				if (hapticf && !gaveFeedback) {
 					//Handheld.Vibrate ();
@@ -117,6 +148,18 @@ public class floatingPage : MonoBehaviour {
 					float dist = 0.0f;
 					targetPlane.Raycast (rayX, out dist);
 					var movePos = rayX.GetPoint (dist);
+					dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
+					dispText2.text = "Pos.: " + movePos.x + "Y: " + movePos.y + "Z: " + movePos.z;
+					if (movePos.x < minX) {
+						movePos.x = minX;
+					}else if (movePos.x > maxX) {
+						movePos.x = maxX;
+					}
+					if (movePos.z < minZ) {
+						movePos.z = minZ;
+					}else if (movePos.z > maxZ) {
+						movePos.z = maxZ;
+					}
 					movedPage.transform.localPosition = movePos;
 				}
 
@@ -127,7 +170,12 @@ public class floatingPage : MonoBehaviour {
 					Destroy (movedPage.GetComponent<LeanTranslate> ());
 				}
 				**/
-				checkOverlaping (movedPage);
+				//checkOverlaping (movedPage);
+				var front = movedPage.transform.GetChild(0);
+				var timeDIff = System.DateTime.Now.ToUniversalTime () - starttime;
+				var camdist = Vector3.Distance (arCam.transform.position, front.transform.position);
+				logdata = logdata + "\n" + System.DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss:ms") + "\t" + timeDIff.TotalMilliseconds + "\t" + "movedPage\t" + front.transform.GetComponent<Renderer> ().material.mainTexture.name  + "\t" + front.transform.position.x*100 + "\t" + front.transform.position.y*100 + "\t" + front.transform.position.z*100 + "\t" + camdist;
+				saveThings ();
 				movedPage = null;
 				gaveFeedback = false;
 			}
@@ -140,9 +188,6 @@ public class floatingPage : MonoBehaviour {
 
 			if (LeanTouch.Fingers [i].IsOverGui && LeanTouch.Fingers[i].Up) {
 				Debug.Log ("LEAN ON UI");
-				//Debug.Log ("Hit? " + hit.collider.name);
-				//if (hit.collider.gameObject.transform.parent == GameObject.Find ("DocListButtons")) {
-				//}
 			}
 
 		}
@@ -201,10 +246,7 @@ public class floatingPage : MonoBehaviour {
 			dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
 			dispText2.text = "Clicked " + clickTarget.transform.parent.name + ", " + clickObject + ", ";
 			//
-			if (clickTarget.name == "MenuButton"){
-				Debug.Log ("Komme ich hier her?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!");
-				return;
-			}
+
 			if (clickTarget.transform.parent.name == "ImageTarget" && !holdingPage) {
 				var texName = hit.collider.gameObject.transform.GetChild (0).GetComponentInChildren<Renderer> ().material.mainTexture.name;
 				Debug.Log ("Bis hier her!!!");
@@ -233,14 +275,17 @@ public class floatingPage : MonoBehaviour {
 				placePage (clickTarget.transform.parent.gameObject);
 			}
 
-			//addInfo (clickTarget);
 		}
 	}
 
 	public void placePage (GameObject page){
 		GameObject newPage = createSelectedPage (page);
-		checkOverlaping (newPage.transform.parent.gameObject);
+		//checkOverlaping (newPage.transform.parent.gameObject);
 		menuControl.addPlacedDocToList (newPage);
+		var timeDIff = System.DateTime.Now.ToUniversalTime () - starttime;
+		var camdist = Vector3.Distance (arCam.transform.position, newPage.transform.position);
+		logdata = logdata + "\n" + System.DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss:ms") + "\t" + timeDIff.TotalMilliseconds + "\t" + "placePage\t" + newPage.transform.GetComponent<Renderer> ().material.mainTexture.name  + "\t" + newPage.transform.position.x*100 + "\t" + newPage.transform.position.y*100 + "\t" + newPage.transform.position.z*100 + "\t" + camdist;
+		saveThings ();
 		/**
 				if (soundf){
 					AudioSource audio = gameObject.GetComponent<AudioSource>();
@@ -254,7 +299,6 @@ public class floatingPage : MonoBehaviour {
 			Debug.Log ("Destroer? " + pickUpPage);
 			DestroyObject (pickUpPage);
 			pickUpPage = null;
-			Debug.Log ("Destroer? " + pickUpPage);
 		}
 	}
 	//move overlapping documents aside
@@ -265,13 +309,17 @@ public class floatingPage : MonoBehaviour {
 			Debug.Log ("CHeck this " + child.gameObject + " child! " + child.GetComponent<Renderer> ().bounds);
 			Debug.Log ("CHeck this! " + b.Intersects (child.GetComponent<Renderer> ().bounds));
 			var chiB = child.GetComponent<Renderer> ().bounds;
-			if (newPage.name != child.name && b.Intersects (chiB)){
+			if (newPage.name != child.name && b.Intersects (chiB)) {
+				/**
 				//child.transform.Translate (b.size.x / 2, b.size.y / 2, 0f);
 				if (b.center.x < chiB.center.x) {
 					child.transform.Translate (b.max.x - chiB.min.x, 0f, 0f);
 				} else {
 					child.transform.Translate (b.min.x - chiB.max.x, 0f, 0f);
-				}
+				}**/
+				stackHeight = stackHeight + pageVol;
+			} else {
+				stackHeight = 0f;
 			}
 		}
 	}
@@ -310,6 +358,7 @@ public class floatingPage : MonoBehaviour {
 		
 	public void takePage (string texName) {
 		currentTextureName = texName;
+
 		//Texture demotex = Resources.Load (currentTextureName) as Texture;
 		dropOldPage ();
 		menuControl.showDocDetails (texName);
@@ -330,8 +379,10 @@ public class floatingPage : MonoBehaviour {
 		GameObject floatingImagePlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
 		GameObject floatingImagePlaneBackground = GameObject.CreatePrimitive(PrimitiveType.Plane);
 
-		Texture demotex = Resources.Load ("Documents/" + currentTextureName) as Texture;
-
+		Texture demotex = Resources.Load ("dummydocs/" + currentTextureName) as Texture;
+		if (currentTextureName == "DemoDocTexture") {
+			demotex = Resources.Load ("Documents/" + currentTextureName) as Texture;
+		}
 		Material floatMat = Resources.Load("floatingMat", typeof(Material)) as Material;
 		floatingImagePlane.GetComponent<Renderer> ().material = floatMat;
 
@@ -371,7 +422,7 @@ public class floatingPage : MonoBehaviour {
 
 		//floatingImagePlane.AddComponent<LeanTouchEvents> ();
 		//var tevent = floatingImagePlane.GetComponent<LeanTouchEvents> ();
-		dispText2.text = "Event: " + LeanGesture.GetPinchScale();
+		//dispText2.text = "Event: " + LeanGesture.GetPinchScale();
 		floatingImagePlane.AddComponent<LeanScale> ();
 		var scaler = floatingImagePlane.GetComponent<LeanScale> ();
 		scaler.Relative = true;
@@ -383,6 +434,8 @@ public class floatingPage : MonoBehaviour {
 		//Color backGr = new Color (0.28f, 0.44f, 0.48f, 0.05f);
 		//Color backGr = new Color32 (72, 112, 123, 128);
 		//floatingImagePlaneBackground.GetComponent<Renderer> ().material.SetColor ("_Color", backGr);
+
+		newlyCreatedPage = floatingImagePlane;
 
 		Material newMat = Resources.Load("backgroundMaterial", typeof(Material)) as Material;
 		floatingImagePlaneBackground.GetComponent<Renderer> ().material = newMat;
@@ -402,7 +455,15 @@ public class floatingPage : MonoBehaviour {
 
 		floatingImagePlaneBackground.GetComponent<Renderer> ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 		floatingImagePlaneBackground.GetComponent<Renderer> ().receiveShadows = false;
+		var timeDIff = System.DateTime.Now.ToUniversalTime () - starttime;
+		var logLine = "\n " + System.DateTime.Now.ToString ("yyyy/MM/dd HH:mm:ss:ms") + "\t" + timeDIff.TotalMilliseconds + "\t" + "takePage\t" + demotex.name;
+		if (pickUpPage != null) {
+			var camdist = Vector3.Distance (arCam.transform.position, pickUpPage.transform.position);
+			logLine = logLine + "\t" + pickUpPage.transform.GetChild (0).transform.position.x*100 + "\t" + pickUpPage.transform.GetChild (0).transform.position.y*100 + "\t" + pickUpPage.transform.GetChild (0).transform.position.z*100 + "\t" + camdist;
 
+		}
+		logdata = logdata + logLine;
+		saveThings ();
 		//
 		floatingImagePlane.gameObject.SetActive(true);
 
@@ -442,12 +503,23 @@ public class floatingPage : MonoBehaviour {
 				float dist = 0.0f;
 				targetPlane.Raycast (ray, out dist);
 				pagePos = ray.GetPoint (dist);
+				pagePos.y = stackHeight;
+				if (pagePos.x < minX) {
+					pagePos.x = minX;
+				}else if (pagePos.x > maxX) {
+					pagePos.x = maxX;
+				}
+				if (pagePos.z < minZ) {
+					pagePos.z = minZ;
+				}else if (pagePos.z > maxZ) {
+					pagePos.z = maxZ;
+				}
 			}
 			pageAngle = new Vector3 (90.0f, camRotY, 0.0f);
 			pageDist = new Vector3 (0.0f, 0.0f, 0.0f);
 			//or change page width and height here for 2D only?
 		}
-
+		Debug.Log ("AAARGH!!!!" + width + ", " + height);
 		docVolume.transform.localScale = new Vector3((pageWidth/10f)*pageSizefactor, (pageHight/10f)*pageSizefactor, pageVol);
 		docVolume.transform.localPosition = pagePos;
 		docVolume.transform.localEulerAngles = pageAngle;
@@ -483,14 +555,17 @@ public class floatingPage : MonoBehaviour {
 		//DestroyObject (GameObject.Find("floatingImg"));
 		imagePlane.gameObject.SetActive(true);
 		docVolume.gameObject.SetActive(true);
-		return (imagePlane);
-
+		return(imagePlane);
 	}
 
 	public void rePlacePage(){
 		GameObject.Destroy (GameObject.Find ("floatingImg"));
 		menuControl.addPlacedDocToList (pickUpPage.transform.GetChild(0).gameObject);
 		pickUpPage.SetActive (true);
+		var timeDIff = System.DateTime.Now.ToUniversalTime () - starttime;
+		var camdist = Vector3.Distance (arCam.transform.position, pickUpPage.transform.position);
+		logdata = logdata + "\n" + System.DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss:ms") + "\t" + timeDIff.TotalMilliseconds + "\t" + "REplacePage\t" + pickUpPage.transform.GetChild (0).transform.GetComponent<Renderer> ().material.mainTexture.name  + "\t" + pickUpPage.transform.GetChild (0).transform.position.x*100 + "\t" + pickUpPage.transform.GetChild (0).transform.position.y*100 + "\t" + pickUpPage.transform.GetChild (0).transform.position.z*100 + "\t" + camdist;
+		saveThings ();
 		if (hapticf && !gaveFeedback) {
 			Handheld.Vibrate ();
 		}
@@ -508,6 +583,36 @@ public class floatingPage : MonoBehaviour {
 		handHeldPage.transform.localPosition = new Vector3 (0, 0, 0.1f);
 		handHeldPage.transform.localScale = new Vector3(pageWidth/100f, 1.0f, pageHight/100f );
 		handHeldPage.transform.localEulerAngles = new Vector3 (90f, 0f, 180f);
+		var timeDIff = System.DateTime.Now.ToUniversalTime () - starttime;
+		logdata = logdata + "\n" + System.DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss:ms") + "\t" + timeDIff.TotalMilliseconds + "\t" + "RecenterFloatingPage\t" + handHeldPage.transform.GetComponent<Renderer> ().material.mainTexture.name;
+		saveThings ();
+
+	}
+		
+
+	public void createStack (){
+		var textures = Resources.LoadAll("dummydocs", typeof(Sprite));
+		minX = 0f;
+		maxX = 0f;
+		minZ = 0f;
+		maxZ = 0f;
+		foreach (Sprite tex in textures) {
+			takePage (tex.name);
+			placePage (newlyCreatedPage);
+			//var stackDoc = Resources.Load ("Document1") as GameObject;
+			//var doc = GameObject.Instantiate (stackDoc, imgTargt.transform);
+			//doc.transform.GetChild(0).GetComponent<Renderer> (). = tex;
+			stackHeight = stackHeight + pageVol;
+		}
+
+		for (int i = 1; i < arCam.transform.childCount; i++) {
+			GameObject.Destroy (arCam.transform.GetChild (i).gameObject);
+		}
+		minX = -1.5f;
+		maxX = 1.5f;
+		minZ = -1.2f;
+		maxZ = 1.2f;
+		stackHeight = 0f;
 	}
 
 	//if page is dropped via delete button
@@ -546,4 +651,78 @@ public class floatingPage : MonoBehaviour {
 		Debug.Log ("SLIDE" + scal);
 		pageSizefactor = scal;
 	}
+
+	public void setLogFileName(){
+		logFileName = System.DateTime.Now.ToString("dd_HH_mm_") + logInput.text + ".txt";
+	}
+
+	public void saveThings (){
+		Debug.Log ("File" + bf);
+
+		bf = new BinaryFormatter ();
+		file = File.Create (Application.persistentDataPath + "_" + logFileName);
+		SavingData data = new SavingData ();
+		data.savecontent = logdata;
+		bf.Serialize (file, data);
+		file.Close ();
+
+		/**
+		//BinaryFormatter bf = new BinaryFormatter ();
+		file = File.Open (Application.persistentDataPath + logFileName, FileMode.OpenOrCreate);
+
+		//file = File.Create (Application.persistentDataPath + "test.txt");
+		SavingData dats = (SavingData)bf.Deserialize(file);
+		//SavingData dats = new SavingData();
+		dats.savecontent = "\n" + logdata;
+
+		bf.Serialize (file, dats);
+		file.Close ();
+		**/
+	}
+
+	public void LogSortingStart(){
+		Debug.Log ("Now! " + System.DateTime.Now.ToUniversalTime());
+		logdata = logdata + "\n" + System.DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss:ms") + "\t" + (System.DateTime.Now.ToUniversalTime()-starttime) + "\t" + "Start Sorting\n";
+		starttime = System.DateTime.Now.ToUniversalTime ();
+		saveThings ();
+	}
+
+	public void LogSortingFinnished(){
+		var timeDIff = System.DateTime.Now.ToUniversalTime () - starttime;
+		Debug.Log ("Later! " + timeDIff.TotalMilliseconds);
+
+		logdata = logdata + "\n" + System.DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss:ms") + "\t" + timeDIff.TotalMilliseconds + "\t" + "Stop Sorting\t" + "\ncurrentDocPoss\n";
+		foreach (Transform child in imgTargt.transform){
+			var camdist = Vector3.Distance (arCam.transform.position, child.transform.position);
+			logdata = logdata + "\t\tsorted Pos:\t" + child.GetChild(0).transform.GetComponent<Renderer> ().material.mainTexture.name + "\t" + child.transform.position.x * 100 + "\t" + child.transform.position.y * 100 + "\t" + child.transform.position.x * 100 + "\t" + camdist + "\n";
+		}
+		logdata = logdata + "\n";
+		saveThings ();
+	}
+
+	public void LogOk(){
+		var timeDIff = System.DateTime.Now.ToUniversalTime () - starttime;
+		okCount = okCount + 1;
+		logdata = logdata + "\n" + System.DateTime.Now.ToString ("yyyy/MM/dd HH:mm:ss:ms") + "\t" + timeDIff.TotalMilliseconds + "\t" + "Doc Found " + okCount + "\n";
+		saveThings ();
+		if (okCount == 14) {
+			continueButton.SetActive (false);
+		}
+	}
+
+	public void LogWrapUp(){
+		var timeDIff = System.DateTime.Now.ToUniversalTime () - starttime;
+		logdata = logdata + "\n" + System.DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss:ms") + "\t" + timeDIff.TotalMilliseconds + "\t" + "All Tasks Done\t" + "\nfinalDocPoss\n";
+		foreach (Transform child in imgTargt.transform){
+			var camdist = Vector3.Distance (arCam.transform.position, child.transform.position);
+			logdata = logdata + "\t\tfinal Pos:\t" + child.GetChild(0).transform.GetComponent<Renderer> ().material.mainTexture.name + "\t" + child.transform.position.x * 100 + "\t" + child.transform.position.y * 100 + "\t" + child.transform.position.x * 100 + "\t" + camdist + "\n";
+		}
+		logdata = logdata + "\n";
+		saveThings ();
+	}
+}
+
+[Serializable]
+class SavingData{
+	public string savecontent = "\n TEEEEEst!";
 }

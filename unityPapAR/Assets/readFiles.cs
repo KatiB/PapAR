@@ -29,12 +29,11 @@ public class readFiles : MonoBehaviour {
 
 	public void displayTextures(){
 		//var textures = Resources.LoadAll("", typeof(Texture2D));
-		var textures = Resources.LoadAll("Documents", typeof(Sprite));
+		var textures = Resources.LoadAll("dummydocs", typeof(Sprite));
 		//GameObject docContainer = GameObject.Find ("DocListButtons");
 
 		//docListContainer = GameObject.Find ("DocumentListContent");
 		Debug.Log ("HELLO?!?!" + textures.Length);
-		Debug.Log ("COUNT! " + docListContainer.transform.childCount);
 		if (docListContainer.transform.childCount < 2 ){
 			foreach (Sprite tex in textures) {
 				//Debug.Log (tex.name);

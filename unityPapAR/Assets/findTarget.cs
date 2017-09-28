@@ -59,4 +59,14 @@ public class findTarget : MonoBehaviour {
 			GameObject.Destroy (currentHighlight);
 		}
 	}
+
+	public void getPage (GameObject listDoc){
+		var searchHeader = menU.transform.Find ("SearchDocHeaderPanel").gameObject;
+		var deskDocList = menU.transform.Find ("DeskList").gameObject;
+		var menuBtn = menU.transform.Find ("MenuButton").gameObject;
+		deskDocList.SetActive (false);
+		menuBtn.SetActive (true);
+		menU.GetComponent<floatingPage> ().takePage (listDoc.name);
+		Debug.Log ("Wo ist das Problem?!");
+	}
 }

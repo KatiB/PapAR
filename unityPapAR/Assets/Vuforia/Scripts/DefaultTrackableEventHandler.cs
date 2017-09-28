@@ -16,10 +16,11 @@ namespace Vuforia
     {
         #region PRIVATE_MEMBER_VARIABLES
  
-        private TrackableBehaviour mTrackableBehaviour;
+		private TrackableBehaviour mTrackableBehaviour;
 		public UnityEngine.UI.Text dispText2;
 		public GameObject menU;
 		public uiAction menuControl;
+    
         #endregion // PRIVATE_MEMBER_VARIABLES
 
 
@@ -30,11 +31,11 @@ namespace Vuforia
         {
 			menU = GameObject.Find ("MenuUICanvas");
 			menuControl = menU.GetComponent<uiAction> ();
-            mTrackableBehaviour = GetComponent<TrackableBehaviour>();
-            if (mTrackableBehaviour)
-            {
-                mTrackableBehaviour.RegisterTrackableEventHandler(this);
-            }
+			mTrackableBehaviour = GetComponent<TrackableBehaviour>();
+			if (mTrackableBehaviour)
+			{
+				mTrackableBehaviour.RegisterTrackableEventHandler(this);
+			}
         }
 
         #endregion // UNTIY_MONOBEHAVIOUR_METHODS
@@ -111,10 +112,7 @@ namespace Vuforia
 
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
 			menuControl.toggleTrackingWarning (true);
-
-
         }
-			
 
         #endregion // PRIVATE_METHODS
     }

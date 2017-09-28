@@ -26,6 +26,8 @@ public class uiAction : MonoBehaviour {
 	public GameObject docDetailMenu;
 	public GameObject flyBackPanel;
 
+	public Button protocollButton;
+
 	public GameObject imgTargt;
 
 	//Variables
@@ -42,11 +44,12 @@ public class uiAction : MonoBehaviour {
 		trackingLostIndicator = uiHolder.transform.Find ("WarningPanel").gameObject;
 		//pointer = uiHolder.transform.Find ("PointerCube").gameObject;
 		imgTargt = GameObject.Find ("ImageTarget");
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+		//dispText2.text = "Path:  " + Application.persistentDataPath;
 	}
 
 	public void closeMenu (){
@@ -70,12 +73,12 @@ public class uiAction : MonoBehaviour {
 	//displays a warning, if tracking is lost
 	public void toggleTrackingWarning (bool visibilityState){
 		if (dispText2 == null) {
-			dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
+//			dispText2 = GameObject.Find("Texti2").GetComponent<UnityEngine.UI.Text>();
 		}
 		if (visibilityState) {
-			dispText2.text = "Tracking is lost!";
+//			dispText2.text = "Tracking is lost!";
 		} else {
-			dispText2.text = "There is the Tracking!";
+//			dispText2.text = "There is the Tracking!";
 		}
 		/**
 		if (trackingLostIndicator == null) {
@@ -141,7 +144,10 @@ public class uiAction : MonoBehaviour {
 		var listElPre = Resources.Load ("DeskDocumentButton") as GameObject;
 		var doc = GUIElement.Instantiate (listElPre, deskDocContainer.transform);
 		var btn = doc.transform.GetChild (0);
-		var tex = Resources.Load<Sprite>("Documents/" + target.GetComponent<Renderer> ().material.mainTexture.name);
+		var tex = Resources.Load<Sprite>("dummydocs/" + target.GetComponent<Renderer> ().material.mainTexture.name);
+		if (target.GetComponent<Renderer> ().material.mainTexture.name == "DemoDocTexture") {
+			tex = Resources.Load<Sprite>("Documents/" + target.GetComponent<Renderer> ().material.mainTexture.name);
+		}
 		btn.GetComponent<Image> ().sprite = tex;
 		btn.name = target.name;
 		var docName = doc.transform.GetChild (1).transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
@@ -176,7 +182,7 @@ public class uiAction : MonoBehaviour {
 		Debug.Log ("TYPE" + listElPre.GetType ());
 		var doc = GUIElement.Instantiate (listElPre, deskDocContainer.transform);
 		var btn = doc.transform.GetChild (0);
-		var tex = Resources.Load<Sprite>("Documents/" + docNam);
+		var tex = Resources.Load<Sprite>("dummydocs/" + docNam);
 		btn.GetComponent<Image> ().sprite = tex;
 		btn.name = tex.name;
 		var docName = doc.transform.GetChild (1).transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
@@ -198,7 +204,9 @@ public class uiAction : MonoBehaviour {
 
 	public void setFlyBack (){
 		Debug.Log ("Destiny! ");
-		flBckBtn = GameObject.Find("flyBackButton").GetComponent<UnityEngine.UI.Button>();
+		if (flBckBtn == null) {
+			//flBckBtn = GameObject.Find ("flyBackButton").GetComponent<UnityEngine.UI.Button> ();
+		}
 		if (uiHolder.GetComponent<floatingPage> ().pickUpPage != null) {
 			flBckBtn.interactable = true;
 			flyBackPanel.GetComponent<Image> ().color = new Color32(238, 235, 200, 255);
@@ -206,6 +214,10 @@ public class uiAction : MonoBehaviour {
 			flBckBtn.interactable = false;
 			flyBackPanel.GetComponent<Image> ().color = new Color32(238, 235, 200, 100);
 		}
+	}
+
+	public void changeProtocollButton() {
+
 	}
 
 	public void cleanUp (){
@@ -218,4 +230,5 @@ public class uiAction : MonoBehaviour {
 			}
 		}
 	}
+		
 }
