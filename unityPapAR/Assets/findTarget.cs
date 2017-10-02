@@ -67,6 +67,6 @@ public class findTarget : MonoBehaviour {
 		deskDocList.SetActive (false);
 		menuBtn.SetActive (true);
 		menU.GetComponent<floatingPage> ().takePage (listDoc.name);
-		Debug.Log ("Wo ist das Problem?!");
+		//menU.GetComponent<floatingPage> ().pickUpPage = listDoc;
 	}
 }

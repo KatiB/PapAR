@@ -114,13 +114,14 @@ public class uiAction : MonoBehaviour {
 
 
 	public void hideDocDetails(){
+		/**
 		if (docMenu != null && docSmalMenu != null) {
 			docMenu.SetActive (false);
 			docSmalMenu.SetActive (true);
 		}
 		if (docDetailMenu != null) {
 			docDetailMenu.SetActive (false);
-		}
+		}**/
 		docDetail.SetActive (false);
 	}
 
